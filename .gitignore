@@ -1,6 +1,7 @@
 # 在进行 git 提交时忽略以下文件玩意儿中的内容
 .DS_Store
 node_modules
+package-lock.json
 
 # local env files
 .env.local

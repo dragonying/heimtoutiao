@@ -11,12 +11,16 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 // 导入字体图标代码
 import './style/index.css'
-// 导入时间处理的过滤器
-import './filter/myfilter'
+
 // 导入自己封装的插件
 import pluginObj from '@/utils/myplugin.js'
 // 导入适配的插件
 import 'amfe-flexible/index.js'
+// 过滤器
+import * as filters from '@/filter/common'
+
+// 全局注册过滤器
+Object.keys(filters).forEach(k => Vue.filter(k, filters[k]))
 
 // 使用插件
 Vue.use(pluginObj)
