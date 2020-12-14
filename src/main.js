@@ -13,7 +13,7 @@ import 'vant/lib/index.css'
 import './style/index.css'
 
 // 导入自己封装的插件
-import pluginObj from '@/utils/myplugin.js'
+import plugin from '@/utils/plug.js'
 // 导入适配的插件
 import 'amfe-flexible/index.js'
 // 过滤器
@@ -23,7 +23,7 @@ import * as filters from '@/filter/common'
 Object.keys(filters).forEach(k => Vue.filter(k, filters[k]))
 
 // 使用插件
-Vue.use(pluginObj)
+Vue.use(plugin)
 
 // // 导入操作 token 的方法
 // import { localGet } from '@/utils/mylocal'
