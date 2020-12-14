@@ -10,6 +10,10 @@ const SearchResult = () => import('../views/searchResult/searchResult.vue')
 const Detail = () => import('../views/detail/detail.vue')
 const Info = () => import('../views/info/info.vue')
 
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 Vue.use(VueRouter)
 
 const routes = [
@@ -31,11 +35,36 @@ const routes = [
   { path: '/searchResult/:key', component: SearchResult },
   // 文章详情
   { path: '/detail/:artid', component: Detail },
-  { path: '/info', component: Info }
+  { path: '/info', component: Info },
+
+  // 测试demo路由，用于测试代码段，切勿写业务代码
+  {
+    path: '/test',
+    component: resolve => require(['@/test/index'], resolve),
+    redirect: '/test/camera',
+    // 子路由
+    children: [
+      {
+        path: 'index',
+        component: resolve => require(['@/test/camera'], resolve)
+      }
+    ]
+  }
 ]
 
 const router = new VueRouter({
   routes
+})
+
+// 全局前置守卫
+router.beforeEach(async (to, from, next) => {
+  console.log('from:', from)
+  console.log('to:', to)
+  next()
+})
+// 全局后置守卫
+router.afterEach(async to => {
+  console.log('to:', to)
 })
 
 export default router
