@@ -37,12 +37,28 @@ const routes = [
   },
   {
     path: '/searchResult/:key',
-    component: resolve => require(['@/views/searchResult/searchResult'], resolve) // 搜索结果页面
+    component: resolve =>
+      require(['@/views/searchResult/searchResult'], resolve) // 搜索结果页面
   },
   // 文章详情
   { path: '/detail/:artid', component: Detail },
   { path: '/info', component: Info },
-
+  // 用户相关
+  {
+    path: '/user',
+    redirect: '/user/setting',
+    component: resolve => require(['@/views/home/my/index'], resolve),
+    children: [
+      {
+        path: 'setting',
+        component: resolve => require(['@/views/home/my/setting'], resolve) // 系统设置
+      }, // 搜索路由
+      {
+        path: 'authentication',
+        component: resolve => require(['@/views/home/my/authentication'], resolve) // 系统设置
+      }
+    ]
+  },
   // 测试demo路由，用于测试代码段，切勿写业务代码
   {
     path: '/test',

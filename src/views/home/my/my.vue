@@ -77,7 +77,7 @@ export default {
   background: #f5f7f9;
   & > * {
     background-color: #fff;
-    margin-bottom: 4px;
+    border-bottom: 4px solid #f5f7f9;
   }
   .top {
     padding: 16px 0;

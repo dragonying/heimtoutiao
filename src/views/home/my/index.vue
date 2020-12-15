@@ -1,18 +1,17 @@
 <template>
-  <div class="app">
-    <!-- 设置路由出口 -->
+  <div class="user">
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app'
+  name: 'user'
 }
 </script>
 
 <style lang="less">
-.app {
+.user {
   height: 100%;
 }
 </style>
