@@ -7,6 +7,7 @@ const Index = () => import('../views/home/index/index.vue')
 const My = () => import('../views/home/my/my.vue')
 const Detail = () => import('../views/detail/detail.vue')
 const Info = () => import('../views/info/info.vue')
+const video = () => import('../views/home/video/video.vue')
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location) {
@@ -27,6 +28,7 @@ const routes = [
     children: [
       { path: 'index', component: Index }, // 主页路由
       { path: 'my', component: My }, // 我的路由
+      { path: 'video', component: video }, // 搜索路由
       {
         path: 'search',
         component: resolve => require(['@/views/home/search/search'], resolve) // 搜索页面
