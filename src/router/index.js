@@ -9,6 +9,7 @@ const Search = () => import('../views/home/search/search.vue')
 const SearchResult = () => import('../views/searchResult/searchResult.vue')
 const Detail = () => import('../views/detail/detail.vue')
 const Info = () => import('../views/info/info.vue')
+const video = () => import('../views/home/video/video.vue')
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location) {
@@ -29,7 +30,8 @@ const routes = [
     children: [
       { path: '/index', component: Index }, // 主页路由
       { path: '/my', component: My }, // 我的路由
-      { path: '/search', component: Search } // 搜索路由
+      { path: '/search', component: Search }, // 搜索路由
+      { path: '/video', component: video } // 搜索路由
     ]
   },
   { path: '/searchResult/:key', component: SearchResult },
