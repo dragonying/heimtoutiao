@@ -9,7 +9,7 @@
         />
       </template>
       <template #title>
-        <span class="title">标题</span>
+        <span class="title">{{ title }}</span>
       </template>
       <template #right> </template>
     </van-nav-bar>
@@ -19,7 +19,12 @@
 export default {
   name: 'navBar',
   props: {
-    to: { // 跳转路由
+    to: {
+      // 跳转路由
+      type: String,
+      default: ''
+    },
+    title: { // 标题
       type: String,
       default: ''
     }
