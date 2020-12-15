@@ -9,9 +9,11 @@
         />
       </template>
       <template #title>
-        <span class="title">标题</span>
+        <span class="title">{{ title }}</span>
       </template>
-      <template #right> </template>
+      <template #right>
+        <van-icon :name="name" />
+      </template>
     </van-nav-bar>
   </div>
 </template>
@@ -19,9 +21,17 @@
 export default {
   name: 'navBar',
   props: {
-    to: { // 跳转路由
+    to: {
+      // 跳转路由
       type: String,
       default: ''
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    name: {
+      type: String
     }
   }
 }
