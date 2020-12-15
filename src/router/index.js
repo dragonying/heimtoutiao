@@ -5,8 +5,6 @@ const Login = () => import('../views/login/login.vue')
 const Home = () => import('../views/home/home.vue')
 const Index = () => import('../views/home/index/index.vue')
 const My = () => import('../views/home/my/my.vue')
-const Search = () => import('../views/home/search/search.vue')
-const SearchResult = () => import('../views/searchResult/searchResult.vue')
 const Detail = () => import('../views/detail/detail.vue')
 const Info = () => import('../views/info/info.vue')
 const video = () => import('../views/home/video/video.vue')
@@ -26,15 +24,21 @@ const routes = [
   {
     path: '/home',
     component: Home,
-    redirect: '/my',
+    redirect: '/home/my',
     children: [
-      { path: '/index', component: Index }, // 主页路由
-      { path: '/my', component: My }, // 我的路由
-      { path: '/search', component: Search }, // 搜索路由
-      { path: '/video', component: video } // 搜索路由
+      { path: 'index', component: Index }, // 主页路由
+      { path: 'my', component: My }, // 我的路由
+      { path: 'video', component: video }, // 搜索路由
+      {
+        path: 'search',
+        component: resolve => require(['@/views/home/search/search'], resolve) // 搜索页面
+      } // 搜索路由
     ]
   },
-  { path: '/searchResult/:key', component: SearchResult },
+  {
+    path: '/searchResult/:key',
+    component: resolve => require(['@/views/searchResult/searchResult'], resolve) // 搜索结果页面
+  },
   // 文章详情
   { path: '/detail/:artid', component: Detail },
   { path: '/info', component: Info },

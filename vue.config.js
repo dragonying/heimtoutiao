@@ -1,6 +1,7 @@
 const path = require('path')
 
 module.exports = {
+  lintOnSave: false, // 关闭 eslint
   publicPath: './', // 设置相对路径，让项目使用相对路径，为了让项目在任意地方都可以使用
   // 全局less处理
   pluginOptions: {
