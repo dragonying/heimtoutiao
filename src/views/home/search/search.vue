@@ -142,9 +142,9 @@ export default {
         color: #c9c9c9;
       }
       .van-cell__title {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        // overflow: hidden;
+        // white-space: nowrap;
+        // text-overflow: ellipsis;
       }
       .title {
         font-size: 12px;
