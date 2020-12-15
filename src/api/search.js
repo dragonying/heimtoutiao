@@ -1,3 +1,4 @@
+/** 搜索相关接口 */
 import request from '@/utils/request'
 
 // 搜索结果
