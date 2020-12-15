@@ -1,6 +1,7 @@
 // 全局组件注册
 const selfComps = {
-  navBar: () => import('@/components/navBar')
+  navBar: () => import('@/components/navBar'),
+  cell: () => import('@/components/cell')
 }
 
 // 写法一 对象

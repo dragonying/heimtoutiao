@@ -55,7 +55,16 @@ const routes = [
       }, // 搜索路由
       {
         path: 'authentication',
-        component: resolve => require(['@/views/home/my/authentication'], resolve) // 系统设置
+        component: resolve =>
+          require(['@/views/home/my/authentication'], resolve) // 身份认证
+      },
+      {
+        path: 'edit',
+        component: resolve => require(['@/views/home/my/edit'], resolve) // 编辑
+      },
+      {
+        path: 'center',
+        component: resolve => require(['@/views/home/my/center'], resolve) // 个人中心
       }
     ]
   },
