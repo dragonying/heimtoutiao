@@ -1,13 +1,25 @@
 <template>
   <div class="indexPage">
-    <div class="headSeek">首页</div>
+    <div class="top">
+      <van-search
+        shape="round"
+        class="headSeek"
+        v-model="value"
+        placeholder="搜索"
+        input-align="center"
+      />
+    </div>
     <div class="labelBox">
-      <ul class="label">
-        <li>推荐</li>
-        <li>后端</li>
-        <li>Linux</li>
-        <li>人工智能</li>
-      </ul>
+      <van-tabs v-model="active" color="#2F97FA" line-width="20px" title-active-color="#000000">
+        <van-tab title="推荐">内容 1</van-tab>
+        <van-tab title="后端">内容 2</van-tab>
+        <van-tab title="Linux">内容 3</van-tab>
+        <van-tab title="人工智能">内容 4</van-tab>
+        <van-tab title="推荐">内容 5</van-tab>
+        <van-tab title="后端">内容 6</van-tab>
+        <van-tab title="Linux">内容 7</van-tab>
+        <van-tab title="人工智能">内容 8</van-tab>
+      </van-tabs>
       <img src="@/assets/01.png" @click="showPopup" class="showPopup" />
     </div>
     <div class="exhibition">
@@ -39,9 +51,33 @@
     <van-popup v-model="show" position="bottom" :style="{height:'60%'}">
       <div class="windows">
         <div class="topWindows">
-          <span class="myChannel">我的频道</span>
-          <span class="compile">编辑</span>
+          <div class="myChannel">我的频道</div>
+          <div class="compile">编辑</div>
         </div>
+        <van-tag
+          v-if="showRecommend"
+          color="#F4F5F6"
+          size="large"
+          type="primary"
+          @close="close"
+          class="showRecommend"
+        >推荐</van-tag>
+        <van-tag
+          v-if="showRecommend"
+          color="#F4F5F6"
+          size="large"
+          type="primary"
+          @close="close"
+          class="showRecommend"
+        >推荐</van-tag>
+        <van-tag
+          v-if="showRecommend"
+          color="#F4F5F6"
+          size="large"
+          type="primary"
+          @close="close"
+          class="showRecommend"
+        >推荐</van-tag>
       </div>
     </van-popup>
   </div>
@@ -51,12 +87,17 @@
 export default {
   data () {
     return {
-      show: false
+      show: false,
+      value: '', // 输入框
+      showRecommend: true // 推荐栏标签
     }
   },
   methods: {
     showPopup () {
       this.show = true
+    },
+    close () {
+      this.showRecommend = false
     }
   }
 }
@@ -64,6 +105,36 @@ export default {
 
 <style lang="less" scoped>
 .indexPage {
+  .showRecommend {
+    display: inline-block;
+    width: 80px;
+    height: 43px;
+    text-align: center;
+    line-height: 43px;
+    font-size: 14px;
+    color: #000000;
+    border-radius: 25px;
+    margin: 15px;
+  }
+  .top {
+    width: 100%;
+    height: 44px;
+    background-color: #2f97fa;
+    /deep/ .headSeek {
+      display: block;
+      margin: 0 auto;
+      padding-top: 5px;
+      width: 275px;
+      height: 34px;
+      background-color: #2f97fa;
+      text-align: center;
+      line-height: 34px;
+      padding: 0 auto;
+      .van-search__content {
+        background-color: #a4c8eb;
+      }
+    }
+  }
   .labelBox {
     position: relative;
     .showPopup {
@@ -74,18 +145,6 @@ export default {
       right: 0;
       top: 13px;
     }
-  }
-  .headSeek {
-    height: 64px;
-    width: 100%;
-    font-size: 14px;
-    font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
-    font-weight: 400;
-    text-align: left;
-    line-height: 64px;
-    text-align: center;
-    background-color: #3296fa;
-    color: #ffffff;
   }
   .label {
     display: flex;
@@ -140,20 +199,33 @@ export default {
       font-size: 16px;
     }
   }
-  .compile,
-  .myChannel {
-    font-size: 16px;
-    font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
-    font-weight: 400;
-    text-align: left;
-    color: #333333;
-    line-height: 18px;
-    letter-spacing: 2px;
-    padding: 15px 15px;
-  }
-  .compile {
-    float: right;
-    color: red;
+  .topWindows {
+    display: flex;
+    justify-content: space-between;
+    .myChannel {
+      display: inline-block;
+      font-size: 16px;
+      font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
+      font-weight: 400;
+      text-align: left;
+      color: #333333;
+      line-height: 18px;
+      letter-spacing: 2px;
+      margin-top: 25px;
+      margin-left: 15px;
+    }
+    .compile {
+      display: inline-block;
+      font-size: 16px;
+      color: red;
+      border: 1px solid red;
+      width: 64px;
+      height: 35px;
+      text-align: center;
+      line-height: 35px;
+      border-radius: 20px;
+      margin: 15px;
+    }
   }
 }
 </style>
