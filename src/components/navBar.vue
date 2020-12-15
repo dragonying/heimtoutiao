@@ -1,18 +1,20 @@
 <template>
   <div class="navBar">
-    <van-nav-bar>
-      <template #left>
-        <van-icon
-          name="arrow-left"
-          class="left-icon"
-          @click="$router.push(to)"
-        />
-      </template>
-      <template #title>
-        <span class="title">{{ title }}</span>
-      </template>
-      <template #right> </template>
-    </van-nav-bar>
+    <van-sticky>
+      <van-nav-bar>
+        <template #left>
+          <van-icon
+            name="arrow-left"
+            class="left-icon"
+            @click="$router.push(to)"
+          />
+        </template>
+        <template #title>
+          <span class="title">{{ title }}</span>
+        </template>
+        <template #right> </template>
+      </van-nav-bar>
+    </van-sticky>
   </div>
 </template>
 <script>
@@ -24,7 +26,8 @@ export default {
       type: String,
       default: ''
     },
-    title: { // 标题
+    title: {
+      // 标题
       type: String,
       default: ''
     }

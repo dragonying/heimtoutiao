@@ -1,6 +1,6 @@
 <template>
   <div class="search-result">
-    <navBar title="搜索结果"></navBar>
+    <navBar title="搜索结果" to="/home/search"></navBar>
     <div class="keyword">{{ query.q }}</div>
     <van-list
       v-model="loading"
@@ -55,7 +55,8 @@ export default {
       this.list.push(...res.data.results)
       //   // 加载状态结束
       this.loading = false
-      this.finished = this.list.length >= res.data.total_count
+      this.finished =
+        !res.data.results.length || this.list.length >= res.data.total_count
     }
   },
   created () {
