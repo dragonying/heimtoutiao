@@ -24,7 +24,7 @@
         </div>
         <van-grid direction="horizontal" :column-num="3">
           <van-grid-item icon="comment-o" :text="String(item.comm_count)" />
-          <van-grid-item icon="like-o" text="点赞" />
+          <van-grid-item icon="like-o" text="点赞" @click="like(item.art_id)" />
           <van-grid-item icon="share-o" text="分享" />
         </van-grid>
       </div>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { search } from '@/api/search'
+import { search, like } from '@/api/search'
 export default {
   name: 'search-result',
   data () {
@@ -57,6 +57,11 @@ export default {
       this.loading = false
       this.finished =
         !res.data.results.length || this.list.length >= res.data.total_count
+    },
+    // 点赞
+    async like (id) {
+      const res = await like(id)
+      console.log(res)
     }
   },
   created () {
@@ -67,7 +72,10 @@ export default {
 
 <style lang="less" scoped>
 .search-result {
-  width:100%;
+  width: 100%;
+  .keyword {
+    text-align: center;
+  }
   .van-list .item {
     .top {
       padding: 32px 16px 16px;

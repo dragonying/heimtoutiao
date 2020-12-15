@@ -17,3 +17,12 @@ export const suggestion = par => {
     params: { q: par }
   })
 }
+
+// 点赞
+export const like = id => {
+  return request({
+    url: '/app/v1_0/article/likings',
+    method: 'POST',
+    data: { target: id }
+  })
+}
