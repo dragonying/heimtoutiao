@@ -48,6 +48,84 @@
         </van-row>
       </div>
     </div>
+        <div class="exhibition">
+      <span>用Supervisor实现进程守护，在异常退</span>
+      <div class="exhibitionImg">
+        <ul>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+        </ul>
+      </div>
+      <div class="details">
+        <van-row>
+          <van-col span="4" class="d1">文章作者</van-col>
+          <van-col span="4" class="d2">87评论</van-col>
+          <van-col span="4" class="d3">3小时前</van-col>
+          <van-col span="12" class="d4">
+            <van-icon name="cross" color="#777777" />
+          </van-col>
+        </van-row>
+      </div>
+    </div>
+        <div class="exhibition">
+      <span>用Supervisor实现进程守护，在异常退</span>
+      <div class="exhibitionImg">
+        <ul>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+        </ul>
+      </div>
+      <div class="details">
+        <van-row>
+          <van-col span="4" class="d1">文章作者</van-col>
+          <van-col span="4" class="d2">87评论</van-col>
+          <van-col span="4" class="d3">3小时前</van-col>
+          <van-col span="12" class="d4">
+            <van-icon name="cross" color="#777777" />
+          </van-col>
+        </van-row>
+      </div>
+    </div>
+        <div class="exhibition">
+      <span>用Supervisor实现进程守护，在异常退</span>
+      <div class="exhibitionImg">
+        <ul>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+          <li>
+            <img src="@/assets/logo.png" alt />
+          </li>
+        </ul>
+      </div>
+      <div class="details">
+        <van-row>
+          <van-col span="4" class="d1">文章作者</van-col>
+          <van-col span="4" class="d2">87评论</van-col>
+          <van-col span="4" class="d3">3小时前</van-col>
+          <van-col span="12" class="d4">
+            <van-icon name="cross" color="#777777" />
+          </van-col>
+        </van-row>
+      </div>
+    </div>
     <van-popup v-model="show" position="bottom" :style="{height:'60%'}">
       <div class="windows">
         <div class="topWindows">
@@ -199,32 +277,37 @@ export default {
       font-size: 16px;
     }
   }
-  .topWindows {
+  .compile,
+  .myChannel {
+    font-size: 16px;
+    font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
+    font-weight: 400;
+    text-align: left;
+    color: #333333;
+    line-height: 18px;
+    letter-spacing: 2px;
+    padding: 15px 15px;
+  }
+  .compile {
+    float: right;
+    color: red;
+    border-radius: 50px;
+  }
+  .recommend {
+    width: 100%;
     display: flex;
-    justify-content: space-between;
-    .myChannel {
-      display: inline-block;
-      font-size: 16px;
+    justify-content: space-around;
+    li {
+      width: 80px;
+      height: 43px;
+      line-height: 43px;
+      text-align: center;
+      font-size: 14px;
       font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
       font-weight: 400;
-      text-align: left;
-      color: #333333;
-      line-height: 18px;
-      letter-spacing: 2px;
-      margin-top: 25px;
-      margin-left: 15px;
-    }
-    .compile {
-      display: inline-block;
-      font-size: 16px;
-      color: red;
-      border: 1px solid red;
-      width: 64px;
-      height: 35px;
-      text-align: center;
-      line-height: 35px;
-      border-radius: 20px;
-      margin: 15px;
+      color: #222222;
+      letter-spacing: 1px;
+      border: 1px solid #000;
     }
   }
 }
