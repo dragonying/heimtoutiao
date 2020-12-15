@@ -67,6 +67,7 @@ export default {
 
 <style lang="less" scoped>
 .search-result {
+  width:100%;
   .van-list .item {
     .top {
       padding: 32px 16px 16px;
@@ -86,6 +87,7 @@ export default {
     .info {
       & > span {
         margin-right: 10px;
+        font-size: 14px;
       }
     }
   }

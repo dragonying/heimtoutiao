@@ -23,8 +23,8 @@ export const imgPath = v => {
 }
 
 // 高亮处理
-export const highLight = (s, v) => {
-  return s.split(v).join('<span style="color:red;">' + v + '</span>')
+export const highLight = (s, v, color = 'red') => {
+  return s.split(v).join('<span style="color:' + color + ';">' + v + '</span>')
 }
 
 // 时间格式化
