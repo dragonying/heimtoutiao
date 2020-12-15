@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import { search } from '@/api/search'
 export default {
   name: 'search-result',
   data () {
@@ -59,6 +60,10 @@ export default {
         }
       }, 1000)
     }
+  },
+  async created () {
+    const res = await search({ page: 1, per_page: 10, q: 'fuck' })
+    console.log(res)
   }
 }
 </script>
