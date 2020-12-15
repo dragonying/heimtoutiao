@@ -16,7 +16,11 @@ Vue.use(VueRouter)
 
 const routes = [
   // 登录路由:登录成功之后，应该跳转到我的页面
-  { path: '/login', component: Login },
+  {
+    path: '/login',
+    alias: '/',
+    component: Login
+  },
   // 验证登录路由:登录成功之后，返回到上一个页面
   { path: '/checkLogin', component: Login },
   // 注册 home 路由
@@ -35,7 +39,8 @@ const routes = [
   },
   {
     path: '/searchResult/:key',
-    component: resolve => require(['@/views/searchResult/searchResult'], resolve) // 搜索结果页面
+    component: resolve =>
+      require(['@/views/searchResult/searchResult'], resolve) // 搜索结果页面
   },
   // 文章详情
   { path: '/detail/:artid', component: Detail },
