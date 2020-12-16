@@ -1,4 +1,8 @@
 import axios from 'axios'
+import { token } from '@/utils/storage'
+import router from '@/router'
+import { Toast } from 'vant'
+import Store from '@/store'
 // 相当于axios副本
 const instance = axios.create({
   baseURL: process.env.VUE_APP_URL // 设置基地址
@@ -13,8 +17,13 @@ instance.interceptors.request.use(
     // 默认需要token
     if (!config.unNeedToken) {
       // 临时header使用
-      config.headers.Authorization =
-        'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDgwMTk1MDMsInVzZXJfaWQiOjExNjE5MDkzNTI3ODk5NjY4NDgsInJlZnJlc2giOmZhbHNlfQ.1aWYj59ZvUa2FGzmTYYwCiY8wNbqCrrB0hTVZQ1Oyaw'
+      const tk = token.get()
+      if (tk && tk.token) {
+        config.headers.Authorization = `Bearer ${tk.token}`
+      } else {
+        Toast.fail('请登录')
+        router.push('/login')
+      }
     }
     return config
   },
@@ -32,6 +41,14 @@ instance.interceptors.response.use(
   function (error) {
     // 对响应错误做点什么
     // 终止了.then直接 进入.catch
+    // console.log(error.response.status)
+    if (error.response.status === 403 || error.response.status === 401) {
+      token.del()
+      Store.commit('setAuthInfo', '')
+      console.log(Store)
+      Toast.fail('请登录')
+      router.push('/login')
+    }
     return Promise.reject(error)
   }
 )

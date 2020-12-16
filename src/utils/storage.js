@@ -28,3 +28,9 @@ export const scanCache = {
   key: 'USER_SCAN_HISTORY',
   ...baseObj
 }
+
+/* 授权 token */
+export const token = {
+  key: process.env.VUE_APP_TOKEN_NAME || 'HEIMA_TOU_TIAO_TOKEN',
+  ...baseObj
+}
