@@ -10,6 +10,8 @@
         </template>
         <template #title>
           <span class="title">{{ title }}</span>
+          <!--自定义插槽-->
+          <slot name="titleslot"></slot>
         </template>
         <template #right>
           <span class="right-title" v-html="right">{{ right }}</span>

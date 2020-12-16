@@ -77,6 +77,10 @@ const routes = [
       {
         path: 'userinfo',
         component: resolve => require(['@/views/home/my/userInfo'], resolve) // 个人页面
+      },
+      {
+        path: 'fans',
+        component: resolve => require(['@/views/home/my/fans'], resolve) // 关注 粉丝
       }
     ]
   },
