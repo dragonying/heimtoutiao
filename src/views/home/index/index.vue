@@ -59,11 +59,26 @@
         </div>
       </div>
     </van-list>
-    <van-popup v-model="show" position="bottom" :style="{height:'60%'}">
+    <van-popup v-model="show" position="bottom">
       <div class="windows">
         <div class="topWindows">
           <div class="myChannel">我的频道</div>
-          <div class="compile">编辑</div>
+          <div class="compile" v-if="compile" @click="add">编辑</div>
+          <div class="compile" v-if="!compile" @click="add">完成</div>
+        </div>
+        <van-tag
+          v-for="(value,index) in info"
+          :key="index"
+          color="#F4F5F6"
+          size="large"
+          type="primary"
+          @close="close"
+          class="showRecommend"
+        >{{value.name}}</van-tag>
+      </div>
+      <div class="windows">
+        <div class="topWindows">
+          <div class="myChannel">频道推荐</div>
         </div>
         <van-tag
           v-if="showRecommend"
@@ -72,97 +87,92 @@
           type="primary"
           @close="close"
           class="showRecommend"
-        >推荐</van-tag>
-        <van-tag
-          v-if="showRecommend"
-          color="#F4F5F6"
-          size="large"
-          type="primary"
-          @close="close"
-          class="showRecommend"
-        >推荐</van-tag>
-        <van-tag
-          v-if="showRecommend"
-          color="#F4F5F6"
-          size="large"
-          type="primary"
-          @close="close"
-          class="showRecommend"
-        >推荐</van-tag>
+        >+ 理论</van-tag>
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { appChannels } from '@/api/user' // 导入获取用户频道列表
-import { appArticles } from '@/api/news' // 导入频道新闻推荐_v1.1
+import { appChannels } from "@/api/user"; // 导入获取用户频道列表
+import { appArticles } from "@/api/news"; // 导入频道新闻推荐_v1.1
 // import loginVue from '../../login/login.vue'
 export default {
-  data () {
+  data() {
     return {
       show: false,
-      value: '', // 输入框
+      value: "", // 输入框
       showRecommend: true, // 推荐栏标签
-      active: '0',
+      active: "0",
       info: [], // 储存当前全部用列表
       list: [],
       loading: false,
       finished: false,
-      pagrTop: true
-    }
+      pagrTop: true,
+      compile: true,
+    };
   },
-  async created () {
+  async created() {
     // 获取全部用户频道
-    const res = await appChannels()
-    this.info = res.data.channels
+    const res = await appChannels();
+    this.info = res.data.channels;
     // console.log(this.info);
   },
   // 事件
   methods: {
+    add() {
+      this.compile = !this.compile;
+    },
     // 用户频道点击高亮
-    tabCheck (name, title) {
+    tabCheck(name, title) {
       // 传入当前点击的频道名和name的绑定
-      this.active = name
+      this.active = name;
     },
     // 弹窗点击事件
-    showPopup () {
-      this.show = true
+    showPopup() {
+      this.show = true;
     },
     // 弹窗浏览列表清除事件
-    close () {
-      this.showRecommend = false
+    close() {
+      this.showRecommend = false;
     },
-    async onLoad () {
-      this.loading = false,
-      this.finished = false,
-      this.list = []
+    async onLoad() {
+      (this.loading = false), (this.finished = false), (this.list = []);
       const res = await appArticles({
         channel_id: this.active,
-        with_top: 0
-      })
-      console.log(res)
-      this.list = res.data.results
-      this.loading = false
+        with_top: 0,
+      });
+      console.log(res);
+      this.list = res.data.results;
+      this.loading = false;
       if (this.list.length >= 10) {
-        this.finished = true
+        this.finished = true;
       }
-      this.pagrTop = false
+      this.pagrTop = false;
       this.$nextTick(() => {
-        this.pagrTop = true
-      })
-    }
+        this.pagrTop = true;
+      });
+    },
   },
   watch: {
     active: function () {
-      this.onLoad()
-    }
-  }
-}
+      this.onLoad();
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>
 .indexPage {
+  .recommend {
+    font-size: 16px;
+    font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
+    font-weight: 400;
+    text-align: left;
+    color: #333333;
+    line-height: 18px;
+    letter-spacing: 2px;
+  }
   .showRecommend {
     display: inline-block;
     width: 80px;
@@ -171,8 +181,7 @@ export default {
     line-height: 43px;
     font-size: 14px;
     color: #000000;
-    border-radius: 25px;
-    margin: 15px;
+    margin: 6px;
   }
   .top {
     width: 100%;
@@ -261,22 +270,35 @@ export default {
       font-size: 16px;
     }
   }
-  .compile,
-  .myChannel {
-    font-size: 16px;
-    font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
-    font-weight: 400;
-    text-align: left;
-    color: #333333;
-    line-height: 18px;
-    letter-spacing: 2px;
-    padding: 15px 15px;
+  .topWindows {
+    display: flex;
+    justify-content: space-between;
+    height: 35px;
+    text-align: center;
+    line-height: 35px;
+    padding: 15px;
+    margin-bottom: 30px;
+    .myChannel {
+      display: block;
+      font-size: 16px;
+      font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
+      font-weight: 400;
+      text-align: left;
+      color: #333333;
+      letter-spacing: 2px;
+    }
+    .compile {
+      width: 65px;
+      height: 35px;
+      border: 1px solid red;
+      text-align: center;
+      color: red;
+      border-radius: 20px;
+      font-size: 16px;
+      line-height: 35px;
+    }
   }
-  .compile {
-    float: right;
-    color: red;
-    border-radius: 50px;
-  }
+
   .recommend {
     width: 100%;
     display: flex;
