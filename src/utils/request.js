@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { token } from '@/utils/storage'
+import router from '@/router'
+import { Toast } from 'vant'
 // 相当于axios副本
 const instance = axios.create({
   baseURL: process.env.VUE_APP_URL // 设置基地址
@@ -21,8 +23,12 @@ instance.interceptors.request.use(
     if (!config.unNeedToken) {
       // 临时header使用
       const tk = token.get()
-
-      config.headers.Authorization = `Bearer ${tk.tk}`
+      if (tk && tk.token) {
+        config.headers.Authorization = `Bearer ${tk.token}`
+      } else {
+        Toast.fail('请登录')
+        router.push('/login')
+      }
     }
     return config
   },
