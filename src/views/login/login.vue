@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <navBar title="登录" :isTrue="false"></navBar>
+    <navBar title="登录" :leftIconShow="false"></navBar>
     <van-form ref="form" class="login-form">
       <van-field
         v-model="form.mobile"
@@ -22,26 +22,29 @@
           <van-icon name="goods-collect-o" />
         </template>
         <template #button>
-          <span class="code" @click="codeClick">获取验证码</span>
+          <span class="code" @click="codeClick" v-if="totalTime === 6"
+            >获取验证码</span
+          >
+          <span class="code" v-else>{{ totalTime }} 后重试</span>
         </template>
       </van-field>
     </van-form>
-    <van-button type="info">登录</van-button>
+    <van-button type="info" @click="loginClick">登录</van-button>
     <div class="deal">隐私条款</div>
   </div>
 </template>
 
 <script>
-import { codes } from '@/api/login'
+import { mobileCode, authorizations } from '@/api/user'
+import { token } from '@/utils/storage'
 export default {
   name: 'login',
   data () {
     return {
+      totalTime: 6,
       form: {
-        // 手机
         mobile: 13911111199,
-        // 验证码
-        code: ''
+        code: 246810
       },
       rules: {
         mobile: [
@@ -68,15 +71,28 @@ export default {
       this.$refs.form
         .validate('mobile')
         .then(() => {
-          codes({
-            mobile: this.form.mobile
-          }).then(res => {
-            this.$toast.success(res.data.data)
+          this.totalTime--
+          const s = setInterval(() => {
+            this.totalTime--
+            if (this.totalTime <= 0) {
+              clearInterval(s)
+              this.totalTime = 6
+            }
+          }, 1000)
+          mobileCode(this.form.mobile).then(res => {
+            console.log(res)
+            this.$toast.success('验证码：246810')
           })
         })
         .catch(() => {
           this.$toast.fail('手机号码错误')
         })
+    },
+    async loginClick () {
+      const res = await authorizations(this.form)
+      token.set(res.data)
+      this.$toast.success('欢迎回来')
+      this.$router.push('/home/my')
     }
   }
 }

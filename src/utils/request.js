@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { token } from '@/utils/storage'
 // 相当于axios副本
 const instance = axios.create({
   baseURL: process.env.VUE_APP_URL // 设置基地址
@@ -13,8 +14,9 @@ instance.interceptors.request.use(
     // 默认需要token
     if (!config.unNeedToken) {
       // 临时header使用
-      config.headers.Authorization =
-        'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDgwMDM2MzQsInVzZXJfaWQiOjExNjE5MDkzNTI3ODk5NjY4NDgsInJlZnJlc2giOmZhbHNlfQ.Da4P3a6N_-Eyi1AtEFjT7ypv_e-QOtF8AzdEMbt7jUY'
+      const tk = token.get()
+
+      config.headers.Authorization = `Bearer ${tk.tk}`
     }
     return config
   },

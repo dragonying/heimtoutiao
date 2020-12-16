@@ -7,6 +7,7 @@ const Index = () => import('../views/home/index/index.vue')
 const My = () => import('../views/home/my/my.vue')
 const Detail = () => import('../views/detail/detail.vue')
 const Info = () => import('../views/info/info.vue')
+const video = () => import('../views/home/video/video.vue')
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location) {
@@ -31,6 +32,7 @@ const routes = [
     children: [
       { path: 'index', component: Index }, // 主页路由
       { path: 'my', component: My }, // 我的路由
+      { path: 'video', component: video }, // 搜索路由
       {
         path: 'search',
         component: resolve => require(['@/views/home/search/search'], resolve) // 搜索页面
@@ -45,7 +47,31 @@ const routes = [
   // 文章详情
   { path: '/detail/:artid', component: Detail },
   { path: '/info', component: Info },
-
+  // 用户相关
+  {
+    path: '/user',
+    redirect: '/user/setting',
+    component: resolve => require(['@/views/home/my/index'], resolve),
+    children: [
+      {
+        path: 'setting',
+        component: resolve => require(['@/views/home/my/setting'], resolve) // 系统设置
+      }, // 搜索路由
+      {
+        path: 'authentication',
+        component: resolve =>
+          require(['@/views/home/my/authentication'], resolve) // 身份认证
+      },
+      {
+        path: 'edit',
+        component: resolve => require(['@/views/home/my/edit'], resolve) // 编辑
+      },
+      {
+        path: 'center',
+        component: resolve => require(['@/views/home/my/center'], resolve) // 个人中心
+      }
+    ]
+  },
   // 测试demo路由，用于测试代码段，切勿写业务代码
   {
     path: '/test',
