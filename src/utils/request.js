@@ -2,7 +2,7 @@ import axios from 'axios'
 import { token } from '@/utils/storage'
 import router from '@/router'
 import { Toast } from 'vant'
-import Vuex from 'vuex'
+import Store from '@/store'
 // 相当于axios副本
 const instance = axios.create({
   baseURL: process.env.VUE_APP_URL // 设置基地址
@@ -42,9 +42,10 @@ instance.interceptors.response.use(
     // 对响应错误做点什么
     // 终止了.then直接 进入.catch
     // console.log(error.response.status)
-    if (error.response.status === 403 && error.response.status === 401) {
+    if (error.response.status === 403 || error.response.status === 401) {
       token.del()
-      // Vuex.commit('')
+      Store.commit('setAuthInfo', '')
+      console.log(Store)
       Toast.fail('请登录')
       router.push('/login')
     }
