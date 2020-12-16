@@ -2,30 +2,34 @@
   <div class="my-page">
     <section v-if="isLogin" class="top">
       <div class="user">
-        <img src="@/assets/logo.png" class="u-left" />
+        <van-image
+          :src="userInfo.photo"
+          class="u-left"
+          @click="$router.push('/user/center')"
+        />
         <div class="u-middle">
-          <div class="name">黑马小公举</div>
+          <div class="name">{{ userInfo.name }}</div>
           <van-button class="applyAudit">申请认证</van-button>
         </div>
         <div class="u-right">
           <van-icon name="fire-o" />
           <div class="today-read">
             <p>今日阅读</p>
-            <p>5分钟</p>
+            <p>{{ Math.abs(userInfo.like_count) }}分钟</p>
           </div>
         </div>
       </div>
       <ul class="count">
         <li class="item">
-          <h4>88</h4>
+          <h4>{{ userInfo.art_count }}</h4>
           <p>动态</p>
         </li>
         <li class="item">
-          <h4>88</h4>
+          <h4>{{ userInfo.follow_count }}</h4>
           <p>关注</p>
         </li>
         <li class="item">
-          <h4>88</h4>
+          <h4>{{ userInfo.fans_count }}</h4>
           <p>粉丝</p>
         </li>
       </ul>
@@ -80,6 +84,9 @@ export default {
     })
   },
   created () {
+    if (!this.isLogin) {
+      this.$store.dispatch('refreshUserInfo')
+    }
   }
 }
 </script>
@@ -124,6 +131,7 @@ export default {
       border-radius: 50%;
       border: 1px solid #fff;
       margin-left: 20px;
+      overflow: hidden;
     }
     .u-middle {
       font-size: 16px;

@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { userSelfInfo } from '@/api/user'
+import axios from 'axios'
+
+import { userSelfInfo, usersDetail } from '@/api/user'
+// import { token } from '@/utils/storage'
 
 Vue.use(Vuex)
 
@@ -22,9 +25,18 @@ export default new Vuex.Store({
   },
   actions: {
     // 更新用户信息
-    async refreshUserInfo (context) {
-      const res = await userSelfInfo()
-      context.commit('setAuthInfo', res.data)
+    refreshUserInfo (context) {
+      axios.all([userSelfInfo(), usersDetail()]).then(
+        axios.spread(function () {
+          const userData = {}
+          for (const index in arguments) {
+            for (const key in arguments[index].data) {
+              userData[key] = arguments[index].data[key]
+            }
+          }
+          context.commit('setAuthInfo', userData)
+        })
+      )
     }
   },
   getters: {},

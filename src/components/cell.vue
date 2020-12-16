@@ -4,8 +4,12 @@
       <span class="title">{{ title }}</span>
     </template>
     <template #default>
-      <img v-if="type === 'img' && name" class="img" :src="baseUrl + name" />
-      <img
+      <van-image
+        v-if="type === 'img' && name"
+        class="img"
+        :src="baseUrl + name"
+      />
+      <van-image
         class="img"
         v-else-if="type === 'img'"
         src="@/assets/images/girl.png"
@@ -43,6 +47,7 @@ export default {
     height: 22px;
     border-radius: 50%;
     vertical-align: middle;
+    overflow: hidden;
   }
   .van-cell__value {
     margin-right: 8px;

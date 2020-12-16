@@ -16,7 +16,7 @@ instance.interceptors.request.use(
       // 临时header使用
       const tk = token.get()
 
-      config.headers.Authorization = `Bearer ${tk.tk}`
+      config.headers.Authorization = `Bearer ${tk.token}`
     }
     return config
   },
