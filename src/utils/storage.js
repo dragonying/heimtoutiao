@@ -31,6 +31,6 @@ export const scanCache = {
 
 /* 授权 token */
 export const token = {
-  key: process.env.VUE_APP_TOKEN_NAME || 'heima_token',
+  key: process.env.VUE_APP_TOKEN_NAME || 'HEIMA_TOU_TIAO_TOKEN',
   ...baseObj
 }
