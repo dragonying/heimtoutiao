@@ -172,7 +172,13 @@ export const mobileCode = mobile => {
     method: 'GET'
   })
 }
-
+// 全部频道列表
+export const appChannels = () => {
+  return request({
+    url: '/app/v1_0/channels',
+    method: 'GET'
+  })
+}
 // 设置用户频道列表（增量式）
 // channels object [] 必须 用户关注的频道列表
 // item 类型: object
