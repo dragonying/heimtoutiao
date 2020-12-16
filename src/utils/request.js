@@ -33,7 +33,6 @@ instance.interceptors.request.use(
       if (!tk || (tk && tk.time && new Date().getTime() - tk.time > 50000)) {
         getToken()
         tk = token.get()
-
       }
 
       config.headers.Authorization = `Bearer ${tk.tk}`
