@@ -6,20 +6,6 @@ const instance = axios.create({
   //   withCredentials: true // 配置接收cookie
 })
 
-// 等待敖坤写好登录即可， 临时处理登录问题
-const getToken = async () => {
-  await axios.get(process.env.VUE_APP_URL + '/app/v1_0/sms/codes/13911111199')
-
-  const ret = await axios.post(
-    process.env.VUE_APP_URL + '/app/v1_0/authorizations',
-    {
-      mobile: '13911111199',
-      code: '246810'
-    }
-  )
-  token.set({ time: new Date().getTime(), tk: ret.data.data.token })
-}
-
 // 添加请求拦截器
 instance.interceptors.request.use(
   function (config) {
@@ -34,12 +20,7 @@ instance.interceptors.request.use(
     // 默认需要token
     if (!config.unNeedToken) {
       // 临时header使用
-      let tk = token.get()
-      console.log(tk)
-      if (!tk || (tk && tk.time && new Date().getTime() - tk.time > 50000)) {
-        getToken()
-        tk = token.get()
-      }
+      const tk = token.get()
 
       config.headers.Authorization = `Bearer ${tk.tk}`
     }

@@ -17,7 +17,11 @@ Vue.use(VueRouter)
 
 const routes = [
   // 登录路由:登录成功之后，应该跳转到我的页面
-  { path: '/login', component: Login },
+  {
+    path: '/login',
+    alias: '/',
+    component: Login
+  },
   // 验证登录路由:登录成功之后，返回到上一个页面
   { path: '/checkLogin', component: Login },
   // 注册 home 路由
@@ -65,6 +69,22 @@ const routes = [
       {
         path: 'center',
         component: resolve => require(['@/views/home/my/center'], resolve) // 个人中心
+      },
+      {
+        path: 'feedback',
+        component: resolve => require(['@/views/home/my/feedBack'], resolve) // 意见反馈
+      },
+      {
+        path: 'robot',
+        component: resolve => require(['@/views/home/my/robot'], resolve) // 小智同学
+      },
+      {
+        path: 'userinfo',
+        component: resolve => require(['@/views/home/my/userInfo'], resolve) // 个人页面
+      },
+      {
+        path: 'fans',
+        component: resolve => require(['@/views/home/my/fans'], resolve) // 关注 粉丝
       }
     ]
   },

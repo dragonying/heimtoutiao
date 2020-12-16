@@ -86,7 +86,8 @@ export const authorizations = data => {
   return request({
     url: '/app/v1_0/authorizations',
     method: 'POST',
-    data: data
+    data: data,
+    unNeedToken: true
   })
 }
 
@@ -171,7 +172,8 @@ export const userChannels = () => {
 export const mobileCode = mobile => {
   return request({
     url: '/app/v1_0/sms/codes/' + mobile,
-    method: 'GET'
+    method: 'GET',
+    unNeedToken: true
   })
 }
 
