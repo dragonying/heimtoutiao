@@ -65,6 +65,14 @@ const routes = [
       {
         path: 'center',
         component: resolve => require(['@/views/home/my/center'], resolve) // 个人中心
+      },
+      {
+        path: 'feedback',
+        component: resolve => require(['@/views/home/my/feedBack'], resolve) // 意见反馈
+      },
+      {
+        path: 'robot',
+        component: resolve => require(['@/views/home/my/robot'], resolve) // 意见反馈
       }
     ]
   },

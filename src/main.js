@@ -16,6 +16,7 @@ import plugin from '@/utils/plug.js'
 import 'amfe-flexible/index.js'
 // 过滤器
 import * as filters from '@/filter/common'
+import '@/style/iconfont/iconfont.css' // 导入iconfont
 
 // 全局注册过滤器
 Object.keys(filters).forEach(k => Vue.filter(k, filters[k]))
