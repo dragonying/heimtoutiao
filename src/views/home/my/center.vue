@@ -102,9 +102,8 @@ export default {
       nicknameShow: false,
       areaData,
       genderColumns: {
-        0: '未知',
-        1: '男',
-        2: '女'
+        0: '男',
+        1: '女'
       },
       // 生日年份
       minDate: new Date(1977, 0, 1),
@@ -121,12 +120,12 @@ export default {
       this.showUploadTip = false
       this.tempUserInfo.photo = v
       this.preveiwImg = true
-      console.log(v)
     },
-    genderConfirm (v, k) {
-      this.editUser({
+    async genderConfirm (v, k) {
+      await profile({
         gender: k
       })
+      this.$store.dispatch('refreshUserInfo')
       this.genderShow = false
     },
     genderCancel (v, k) {
