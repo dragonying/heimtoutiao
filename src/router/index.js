@@ -69,6 +69,22 @@ const routes = [
       {
         path: 'center',
         component: resolve => require(['@/views/home/my/center'], resolve) // 个人中心
+      },
+      {
+        path: 'feedback',
+        component: resolve => require(['@/views/home/my/feedBack'], resolve) // 意见反馈
+      },
+      {
+        path: 'robot',
+        component: resolve => require(['@/views/home/my/robot'], resolve) // 小智同学
+      },
+      {
+        path: 'userinfo',
+        component: resolve => require(['@/views/home/my/userInfo'], resolve) // 个人页面
+      },
+      {
+        path: 'fans',
+        component: resolve => require(['@/views/home/my/fans'], resolve) // 关注 粉丝
       }
     ]
   },

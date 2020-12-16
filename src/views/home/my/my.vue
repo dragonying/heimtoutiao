@@ -51,23 +51,35 @@
     </section>
     <van-cell-group class="itemBar">
       <van-cell title="消息通知" center is-link to="" />
-      <van-cell title="实名认证" center is-link to="" />
+      <van-cell title="实名认证" center is-link to="/user/authentication" />
     </van-cell-group>
     <van-cell-group class="itemBar">
-      <van-cell title="用户反馈" center is-link to="" />
-      <van-cell title="小智同学" center is-link to="" />
-      <van-cell title="系统设置" center is-link to="" />
+      <van-cell title="用户反馈" center is-link to="/user/feedback" />
+      <van-cell title="小智同学" center is-link to="/user/robot" />
+      <van-cell title="系统设置" center is-link to="/user/setting" />
     </van-cell-group>
   </div>
 </template>
 
 <script>
+// import { userSelfInfo } from '@/api/user'
+import { mapState } from 'vuex'
+
 export default {
   name: 'my-page',
   data () {
-    return {
-      isLogin: false
-    }
+    return {}
+  },
+  methods: {
+    // async userInfo () {}
+  },
+  computed: {
+    ...mapState({
+      userInfo: state => state.userInfo,
+      isLogin: state => state.isLogin
+    })
+  },
+  created () {
   }
 }
 </script>
