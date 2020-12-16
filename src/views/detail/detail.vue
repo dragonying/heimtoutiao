@@ -1,6 +1,11 @@
 <template>
-  <div class="detail">
-    <navBar right name="ellipsis" to="/searchResult/123"></navBar>
+  <div class="detail" v-if="bol">
+    <navBar
+      right
+      name="ellipsis"
+      to="/searchResult/123"
+      title="文章详情"
+    ></navBar>
     <div class="content">
       <div class="content-i" v-if="comList">
         <div class="title">{{ comList.title }}</div>
@@ -11,19 +16,23 @@
           </div>
           <div class="user-name">
             <div class="user-name1">{{ comList.aut_name }}</div>
-            <div class="user-time">{{ comList.pubdate }}</div>
+            <div class="user-time">{{ comList.pubdate | formatTime }}</div>
           </div>
           <div class="user-right">
+            <van-button
+              type="warning"
+              round
+              v-if="comList.is_followed"
+              @click="onFollow(true)"
+              >取消关注</van-button
+            >
             <van-button
               icon="plus"
               type="info"
               round
-              v-if="!comList.is_followed"
-              @click="onFollow"
+              v-else
+              @click="onFollow(false)"
               >关注</van-button
-            >
-            <van-button type="warning" round v-else @click="unFollow"
-              >取消关注</van-button
             >
           </div>
         </div>
@@ -42,12 +51,28 @@
         <div class="like-item3">
           <van-button
             icon="good-job-o"
-            class="good"
-            :class="{ tored1: comList.attitude === 1 }"
-            @click="giveLike"
+            class="good tored1"
+            v-if="comList.attitude === 1"
+            @click="onLike(false)"
             >点赞</van-button
           >
-          <van-button icon="delete" class="good">不喜欢</van-button>
+          <van-button
+            icon="good-job-o"
+            class="good"
+            v-else
+            @click="onLike(true)"
+            >点赞</van-button
+          >
+          <van-button
+            icon="delete"
+            class="good tored1"
+            v-if="comList.attitude === 0"
+            @click="unLike(false)"
+            >不喜欢</van-button
+          >
+          <van-button icon="delete" class="good" v-else @click="unLike(true)"
+            >不喜欢</van-button
+          >
         </div>
       </div>
       <div class="adv">
@@ -71,14 +96,14 @@
           <div class="com-txt">我出去就跟别人说我的是iPhoneXS就完事了呗</div>
           <div class="com-item2">
             <div class="com-time">09-13 15:51</div>
-            <div class="reply">18回复</div>
+            <div class="reply" @click="showInput = true">18回复</div>
           </div>
         </div>
       </div>
     </div>
     <div class="footer">
       <div class="foot">
-        <div class="search">写评论</div>
+        <div class="search" @click="showInput = true">写评论</div>
         <van-icon name="chat-o" badge="9" />
         <van-icon
           :name="comList.is_collected ? 'like' : 'like-o'"
@@ -87,16 +112,27 @@
         <van-icon name="share-o" />
       </div>
     </div>
+    <van-popup v-model="showInput" position="bottom">
+      <van-field
+        v-model="inputValue"
+        type="textarea"
+        placeholder="歪日Σσ(・Д・；)我我我什么都没做!!!"
+        rows="4"
+      ></van-field>
+      <span class="send" @click="onSend">发送</span>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import {
   userArticles,
-  appV10UserFollowings,
-  appUserFollowings,
-  appArticleLikings
-} from '../../api/detail'
+  giveLike,
+  disLike,
+  appComments,
+  replyComments
+} from '../../api/news'
+import { followings } from '../../api/user'
 export default {
   name: 'detail',
   components: {
@@ -104,29 +140,69 @@ export default {
   },
   data () {
     return {
-      comList: '',
-      acticleId: this.$route.params.artid
+      comList: '', // 文章详情
+      acticleId: this.$route.params.artid, // 文章id
+      bol: true, // 静默刷新
+      showInput: false, // 输入框是否显示
+      inputValue: '' // 用户输入的字
     }
   },
   async created () {
     const res = await userArticles(this.acticleId)
     this.comList = res.data
+    // console.log(res.data)
     // 获取评论或评论回复
+    const res2 = await appComments({
+      type: 'a',
+      source: this.comList.art_id
+    })
+    console.log(res2)
   },
   methods: {
-    // 点击关注
-    async onFollow () {
-      const res = await appV10UserFollowings({ target: this.comList.aut_id })
+    // 取消关注用户 和 关注用户
+    async onFollow (isTrue) {
+      this.$toast.loading({
+        duration: 0
+      })
+      const res = await followings(this.comList.aut_id, isTrue)
       console.log(res)
+      this.bol = false
+      this.$nextTick(() => {
+        this.bol = true
+      })
+      this.$toast.success('修改成功')
     },
-    // 点击取消关注
-    async unFollow () {
-      const res = await appUserFollowings(this.comList.aut_id)
+    // 对文章点赞和取消对文章点赞
+    async onLike (isTrue) {
+      this.$toast.loading({
+        duration: 0
+      })
+      const res = await giveLike(this.comList.art_id, isTrue)
       console.log(res)
+      this.bol = false
+      this.$nextTick(() => {
+        this.bol = true
+      })
+      this.$toast.success('修改成功')
     },
-    // 点赞文章
-    async giveLike () {
-      const res = await appArticleLikings({ target: this.comList.aut_id })
+    async unLike (isTrue) {
+      this.$toast.loading({
+        duration: 0
+      })
+      const res = await disLike(this.comList.art_id, isTrue)
+      console.log(res)
+      this.bol = false
+      this.$nextTick(() => {
+        this.bol = true
+      })
+      this.$toast.success('修改成功')
+    },
+    // 添加评论或评论回复
+    async onSend () {
+      const res = replyComments({
+        target: this.comList.art_id,
+        content: this.inputValue
+      })
       console.log(res)
     }
   }
@@ -162,6 +238,7 @@ export default {
         height: 40px;
         img {
           width: 100%;
+          height: 100%;
           border-radius: 50%;
         }
       }
@@ -369,8 +446,23 @@ export default {
   .tored1 {
     color: #ed5a65 !important;
     border-color: #ed5a65 !important;
-    .van-icon-good-job-o {
+    .van-icon {
       color: #ed5a65 !important;
+    }
+  }
+  .van-popup {
+    padding: 20px 15px 5px;
+    .van-field {
+      border-radius: 6px;
+      background-color: #f7f4f5;
+      padding: 8px;
+      font-size: 14px;
+    }
+    .send {
+      float: right;
+      font-size: 16px;
+      color: #b4b4bd;
+      margin-top: 6px;
     }
   }
 }
