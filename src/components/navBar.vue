@@ -27,6 +27,7 @@ export default {
       default: ''
     },
     title: {
+      // 标题
       type: String,
       default: ''
     },
