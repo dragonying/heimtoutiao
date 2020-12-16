@@ -31,3 +31,10 @@ export function deepClone (target) {
   // 返回最终结果
   return result
 }
+
+/* 随机头像 */
+export function randPic () {
+  return require('@/assets/images/avatar/' +
+    Math.ceil(Math.random() * 98) +
+    '.jpg')
+}

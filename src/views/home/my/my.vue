@@ -20,15 +20,15 @@
         </div>
       </div>
       <ul class="count">
-        <li class="item">
+        <li class="item" @click="$router.push('/user/userInfo')">
           <h4>{{ userInfo.art_count }}</h4>
           <p>动态</p>
         </li>
-        <li class="item">
+        <li class="item" @click="$router.push('/user/fans?active=0')">
           <h4>{{ userInfo.follow_count }}</h4>
           <p>关注</p>
         </li>
-        <li class="item">
+        <li class="item" @click="$router.push('/user/fans?active=1')">
           <h4>{{ userInfo.fans_count }}</h4>
           <p>粉丝</p>
         </li>
