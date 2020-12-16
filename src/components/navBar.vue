@@ -1,7 +1,7 @@
 <template>
   <div class="navBar">
     <van-nav-bar>
-      <template #left>
+      <template #left v-if="isTrue">
         <van-icon
           name="arrow-left"
           class="left-icon"
@@ -25,8 +25,13 @@ export default {
       default: ''
     },
     title: {
+      // 标题
       type: String,
       default: ''
+    },
+    isTrue: {
+      type: Boolean,
+      default: true
     }
   }
 }

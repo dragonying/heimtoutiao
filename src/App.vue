@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app">
     <!-- 设置路由出口 -->
     <router-view></router-view>
   </div>
@@ -9,4 +9,8 @@
 export default {}
 </script>
 
-<style></style>
+<style lang="less">
+.app {
+  height: 100%;
+}
+</style>
