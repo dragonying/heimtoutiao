@@ -62,12 +62,24 @@
 </template>
 
 <script>
+// import { userSelfInfo } from '@/api/user'
+import { mapState } from 'vuex'
+
 export default {
   name: 'my-page',
   data () {
-    return {
-      isLogin: false
-    }
+    return {}
+  },
+  methods: {
+    // async userInfo () {}
+  },
+  computed: {
+    ...mapState({
+      userInfo: state => state.userInfo,
+      isLogin: state => state.isLogin
+    })
+  },
+  created () {
   }
 }
 </script>
