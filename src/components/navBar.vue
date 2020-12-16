@@ -1,20 +1,21 @@
 <template>
   <div class="navBar">
-    <van-nav-bar>
-      <template #left>
-        <van-icon
-          name="arrow-left"
-          class="left-icon"
-          @click="$router.push(to)"
-        />
-      </template>
-      <template #title>
-        <span class="title">{{ title }}</span>
-      </template>
-      <template #right>
-        <van-icon :name="name" />
-      </template>
-    </van-nav-bar>
+    <van-sticky>
+      <van-nav-bar
+        @click-left="$router.push(to)"
+        @click-right="$emit('onSave')"
+      >
+        <template #left v-if="leftIconShow">
+          <van-icon name="arrow-left" class="left-icon" />
+        </template>
+        <template #title>
+          <span class="title">{{ title }}</span>
+        </template>
+        <template #right>
+          <span class="right-title" v-html="right">{{ right }}</span>
+        </template>
+      </van-nav-bar>
+    </van-sticky>
   </div>
 </template>
 <script>
@@ -31,8 +32,14 @@ export default {
       type: String,
       default: ''
     },
-    name: {
+    // 右边文案
+    right: {
       type: String
+    },
+    // 是否显示左箭头
+    leftIconShow: {
+      type: Boolean,
+      default: true
     }
   }
 }
@@ -52,6 +59,12 @@ export default {
     .left-icon {
       color: #fff;
       font-size: 16px;
+    }
+    .right-title {
+      font-size: 14px;
+      font-weight: 400;
+      text-align: right;
+      color: #181a39;
     }
   }
 }

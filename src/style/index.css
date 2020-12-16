@@ -33,6 +33,12 @@ body,
   background-color: #fff;
   color: #333;
 }
+/* 一行显示 */
+.one-line {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 /* 单词换行*/
 .wrap {
   word-wrap: break-word;

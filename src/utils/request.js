@@ -14,7 +14,7 @@ instance.interceptors.request.use(
     if (!config.unNeedToken) {
       // 临时header使用
       config.headers.Authorization =
-        'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDgwNTA2NTEsInVzZXJfaWQiOjExNjE5MDkzNTI3ODk5NjY4NDgsInJlZnJlc2giOmZhbHNlfQ.dU2jcxXrFxgWGYsJqJ_rMkxJuDM6umMhQv7g_Jn9kRg'
+        'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDgwODk2NzksInVzZXJfaWQiOjExNjE5MDkzNTI3ODk5NjY4NDgsInJlZnJlc2giOmZhbHNlfQ.FZaosmx1rIcZeVf1tPB813t3G0XtxdbB4SIoctsWBv0'
     }
     return config
   },
