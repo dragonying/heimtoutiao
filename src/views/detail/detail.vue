@@ -53,24 +53,24 @@
             icon="good-job-o"
             class="good tored1"
             v-if="comList.attitude === 1"
-            @click="onLike(false)"
+            @click="onLike(true)"
             >点赞</van-button
           >
           <van-button
             icon="good-job-o"
             class="good"
-            v-else
-            @click="onLike(true)"
+            v-else-if="comList.attitude === -1"
+            @click="onLike(false)"
             >点赞</van-button
           >
           <van-button
             icon="delete"
             class="good tored1"
             v-if="comList.attitude === 0"
-            @click="unLike(false)"
+            @click="unLike(true)"
             >不喜欢</van-button
           >
-          <van-button icon="delete" class="good" v-else @click="unLike(true)"
+          <van-button icon="delete" class="good" v-else @click="unLike(false)"
             >不喜欢</van-button
           >
         </div>
@@ -84,27 +84,38 @@
         </div>
         <div class="txt-item1">学前端 选择-传智播客</div>
       </div>
-      <div class="comment">
-        <div class="com-left">
-          <img src="../../assets/logo.png" alt="" />
-        </div>
-        <div class="com-right">
-          <div class="com-item1">
-            <div class="com-name">哈撒给i</div>
-            <div class="give-like"><van-icon name="good-job-o" />26</div>
+      <template v-if="remarkList">
+        <div
+          class="comment"
+          v-for="(item, index) in remarkList.results"
+          :key="index"
+        >
+          <div class="com-left">
+            <img :src="item.aut_photo" v-if="item.aut_photo" alt="" />
+            <img src="../../assets/empty.jpg" v-else alt="" />
           </div>
-          <div class="com-txt">我出去就跟别人说我的是iPhoneXS就完事了呗</div>
-          <div class="com-item2">
-            <div class="com-time">09-13 15:51</div>
-            <div class="reply" @click="showInput = true">18回复</div>
+          <div class="com-right">
+            <div class="com-item1">
+              <div class="com-name">{{ item.aut_name }}</div>
+              <div class="give-like">
+                <van-icon name="good-job-o" />{{ item.like_count }}
+              </div>
+            </div>
+            <div class="com-txt">{{ item.content }}</div>
+            <div class="com-item2">
+              <div class="com-time">{{ item.pubdate | formatTime }}</div>
+              <div class="reply" @click="huiFu(item)">
+                {{ item.reply_count }}回复
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
     <div class="footer">
       <div class="foot">
         <div class="search" @click="showInput = true">写评论</div>
-        <van-icon name="chat-o" badge="9" />
+        <van-icon name="chat-o" :badge="remarkList.total_count || 0" />
         <van-icon
           :name="comList.is_collected ? 'like' : 'like-o'"
           :class="{ tored: comList.is_collected }"
@@ -121,22 +132,26 @@
       ></van-field>
       <span class="send" @click="onSend">发送</span>
     </van-popup>
+    <van-popup v-model="showHuiFu" position="bottom">
+      <van-field
+        v-model="inputVal"
+        type="textarea"
+        placeholder="歪日Σσ(・Д・；)我我我什么都没做!!!"
+        rows="4"
+      ></van-field>
+      <span class="send" @click="onRemake">发送</span>
+    </van-popup>
   </div>
 </template>
 
 <script>
-import {
-  userArticles,
-  giveLike,
-  disLike,
-  appComments,
-  replyComments
-} from '../../api/news'
-import { followings } from '../../api/user'
+import { userArticles, giveLike, disLike, replyComments } from '@/api/news'
+import { followings } from '@/api/user'
+import { mapState } from 'vuex'
 export default {
   name: 'detail',
   components: {
-    navBar: () => import('../../components/navBar')
+    navBar: () => import('@/components/navBar')
   },
   data () {
     return {
@@ -144,32 +159,31 @@ export default {
       acticleId: this.$route.params.artid, // 文章id
       bol: true, // 静默刷新
       showInput: false, // 输入框是否显示
-      inputValue: '' // 用户输入的字
+      inputValue: '', // 用户输入的字
+      remarkList: '', // 用户评论
+      showHuiFu: false,
+      inputVal: ''
     }
   },
   async created () {
-    const res = await userArticles(this.acticleId)
-    this.comList = res.data
-    // console.log(res.data)
-    // 获取评论或评论回复
-    const res2 = await appComments({
-      type: 'a',
-      source: this.comList.art_id
-    })
-    console.log(res2)
+    await this.refreshData() // 获取文章信息
+    await this.onDiscuss(false, 'a') // 获取评论
+    await this.onDiscuss(false, 'c') // 获取评论回复
   },
   methods: {
+    // 刷新文章信息
+    async refreshData () {
+      const res = await userArticles(this.acticleId)
+      this.comList = res.data
+      console.log(this.comList)
+    },
     // 取消关注用户 和 关注用户
     async onFollow (isTrue) {
       this.$toast.loading({
         duration: 0
       })
-      const res = await followings(this.comList.aut_id, isTrue)
-      console.log(res)
-      this.bol = false
-      this.$nextTick(() => {
-        this.bol = true
-      })
+      await followings(this.comList.aut_id, isTrue)
+      this.refreshData()
       this.$toast.success('修改成功')
     },
     // 对文章点赞和取消对文章点赞
@@ -177,13 +191,9 @@ export default {
       this.$toast.loading({
         duration: 0
       })
-      const res = await giveLike(this.comList.art_id, isTrue)
-      console.log(res)
-      this.bol = false
-      this.$nextTick(() => {
-        this.bol = true
-      })
+      await giveLike(this.comList.art_id, isTrue)
       this.$toast.success('修改成功')
+      this.refreshData()
     },
     async unLike (isTrue) {
       this.$toast.loading({
@@ -191,20 +201,67 @@ export default {
       })
       const res = await disLike(this.comList.art_id, isTrue)
       console.log(res)
-      this.bol = false
-      this.$nextTick(() => {
-        this.bol = true
-      })
+      this.refreshData()
       this.$toast.success('修改成功')
     },
-    // 添加评论或评论回复
-    async onSend () {
-      const res = replyComments({
-        target: this.comList.art_id,
-        content: this.inputValue
-      })
-      console.log(res)
+    // 评论回复
+    onSend () {
+      if (this.inputValue.length > 0) {
+        this.$toast.loading({
+          duration: 0
+        })
+        this.onDiscuss(true, 'a')
+        this.onDiscuss(false)
+        this.showInput = false
+        this.inputValue = ''
+        this.$toast.success('发布成功')
+      }
+    },
+    // huiFu (item) {
+    //   this.showInput = true
+    //   this.onSend(item)
+    //   console.log(item)
+    // },
+    async onDiscuss (isTrue, type, item) {
+      // console.log(item)
+      if (isTrue) {
+        if (type === 'a') {
+          await replyComments(
+            {
+              target: this.comList.art_id,
+              content: this.inputValue
+            },
+            isTrue
+          )
+        } else {
+          await replyComments(
+            {
+              target: item.aut_id,
+              content: this.inputValue,
+              aid: item.aut_id
+            },
+            isTrue
+          )
+          // console.log(ress)
+        }
+      } else {
+        const res = await replyComments(
+          {
+            type,
+            source: this.comList.art_id
+          },
+          isTrue
+        )
+        if (type === 'a') {
+          this.remarkList = res.data
+        } else {
+          this.replyData = res.data
+        }
+      }
     }
+  },
+  computed: {
+    ...mapState(['userInfo'])
   }
 }
 </script>
@@ -359,6 +416,7 @@ export default {
         }
       }
       .com-right {
+        flex: 1;
         .com-item1 {
           display: flex;
           justify-content: space-between;
@@ -386,6 +444,7 @@ export default {
           line-height: 22px;
           letter-spacing: 1px;
           padding-bottom: 7px;
+          text-indent: 32px;
         }
         .com-item2 {
           display: flex;

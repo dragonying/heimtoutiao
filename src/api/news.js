@@ -28,8 +28,8 @@ export const disLike = (target, isDelete = false) => {
 export const replyComments = (target, isDelete = false) => {
   const option = {
     url: '/app/v1_0/comments',
-    method: isDelete ? 'DELETE' : 'POST'
+    method: isDelete ? 'POST' : 'GET'
   }
-  isDelete ? (option.url += `/${target}`) : (option.data = { target })
+  isDelete ? (option.data = target) : (option.params = target)
   return request(option)
 }
