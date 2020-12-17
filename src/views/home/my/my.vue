@@ -43,11 +43,11 @@
     </section>
     <section class="tool">
       <ul class="tool-item">
-        <li class="item">
+        <li class="item" @click="$router.push('/user/history')">
           <van-icon class="star" name="star-o" />
           <p>收&nbsp;藏</p>
         </li>
-        <li class="item">
+        <li class="item" @click="$router.push('/user/history')">
           <van-icon class="like" name="clock-o" />
           <p>历&nbsp;史</p>
         </li>

@@ -88,6 +88,7 @@ import areaData from '@/assets/area'
 import { mapState } from 'vuex'
 import { photo, profile } from '@/api/user'
 import { deepClone } from '@/utils/tool'
+
 export default {
   name: 'user-center',
   components: {

@@ -88,6 +88,10 @@ const routes = [
       {
         path: 'fans',
         component: resolve => require(['@/views/home/my/fans'], resolve) // 关注 粉丝
+      },
+      {
+        path: 'history',
+        component: resolve => require(['@/views/home/my/history'], resolve) // 收藏 历史
       }
     ]
   },
