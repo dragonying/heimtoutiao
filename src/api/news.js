@@ -1,17 +1,9 @@
 import request from '@/utils/request'
-<<<<<<< HEAD
-
-// channel_id	是		频道ID
-// timestamp	是	时间戳整数 单位毫秒	时间戳，请求新的推荐数据传当前的时间戳，请求历史推荐传指定的时间戳
-// with_top	是	=	是否包含置顶，进入页面第一次请求时要包含置顶文章，1 - 包含置顶，0 - 不包含
-export const appArticles = ({ channel_id, with_top }) => {
-=======
 // 频道新闻推荐_V1.1
 // channel_id是 频道ID
 // timestamp 是 时间戳整数 单位毫秒 时间戳，请求新的推荐数据传当前的时间戳，请求历史推荐传指定的时间戳
 // with_top 是 0或1 是否包含置顶，进入页面第一次请求时要包含置顶文章，1 - 包含置顶，0 - 不包含
 export const appArticles = ({ channelId, withTop }) => {
->>>>>>> 7d8ebecb4efce07425063cb7c6f16cfb82ea0c4b
   return request({
     url: '/app/v1_1/articles',
     method: 'GET',
