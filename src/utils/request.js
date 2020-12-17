@@ -51,7 +51,7 @@ instance.interceptors.response.use(
     if (error.response.status === 403 || error.response.status === 401) {
       token.del()
       Store.commit('setAuthInfo', '')
-      console.log(Store)
+      // console.log(Store)
       Toast.fail('请登录')
       router.push('/login')
     }
