@@ -1,24 +1,24 @@
 <template>
   <div class="user-page">
-    <navBar title="黑马李依依" to="/home/my"></navBar>
+    <navBar :title="user.name" to="/user/fans"></navBar>
     <section class="top">
-      <img class="top-left" src="@/assets/logo.png" />
+      <van-image class="top-left" :src="user.photo" />
       <div class="top-right">
         <ul class="count">
           <li class="item">
-            <h4>88</h4>
+            <h4>{{ user.like_count || 0 }}</h4>
             <p>发布</p>
           </li>
           <li class="item">
-            <h4>88</h4>
+            <h4>{{ user.follow_count || 0 }}</h4>
             <p>动态</p>
           </li>
           <li class="item">
-            <h4>88</h4>
+            <h4>{{ user.like_count || 0 }}</h4>
             <p>关注</p>
           </li>
           <li class="item">
-            <h4>88</h4>
+            <h4>{{ user.fans_count || 0 }}</h4>
             <p>粉丝</p>
           </li>
         </ul>
@@ -30,36 +30,78 @@
       <li class="tip-item"><span>简介：</span>微软认证开发者</li>
     </ul>
     <section class="pro">
-      <div class="item">
-        <div class="author">
-          <img class="avatar" src="@/assets/logo.png" />
-          <div>
-            <h5 class="name">黑马李依依</h5>
-            <div class="time">2010-05-09</div>
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+        <div v-for="(item, index) in list" :key="index">
+          <div class="item">
+            <div class="author">
+              <van-image class="avatar" :src="item.photo" />
+              <div>
+                <h5 class="name">{{ item.name }}</h5>
+                <div class="time">{{ item.birthday }}</div>
+              </div>
+            </div>
+            <div class="info">
+              <h4 class="title van-multi-ellipsis--l2">
+                {{ item.intro }}
+              </h4>
+              <div class="content">
+                <van-image
+                  class="img"
+                  v-for="(k, i) in item.pic.slice(0, 3)"
+                  :key="i"
+                  :src="k"
+                />
+              </div>
+            </div>
+            <van-grid direction="horizontal" :column-num="3">
+              <van-grid-item icon="comment-o" text="评论" />
+              <van-grid-item icon="good-job-o" text="点赞" />
+              <van-grid-item icon="star-o" text="收藏" />
+            </van-grid>
           </div>
         </div>
-        <div class="info">
-          <h4 class="title van-ellipsis">
-            用Supervisor实现进程守护，在异常退出时...
-          </h4>
-          <div class="content">
-            <img class="img" src="@/assets/logo.png" />
-            <img class="img" src="@/assets/logo.png" />
-            <img class="img" src="@/assets/logo.png" />
-          </div>
-          <van-grid direction="horizontal" :column-num="3">
-            <van-grid-item icon="comment-o" text="评论" />
-            <van-grid-item icon="good-job-o" text="点赞" />
-            <van-grid-item icon="star-o" text="收藏" />
-          </van-grid>
-        </div>
-      </div>
+      </van-list>
     </section>
   </div>
 </template>
 <script>
+import { randomUser } from '@/api/test'
+
 export default {
-  name: 'user-page'
+  name: 'user-page',
+  data () {
+    return {
+      loading: false,
+      finished: false,
+      query: {
+        page: 0,
+        per_page: 10
+      },
+      list: []
+    }
+  },
+  computed: {
+    user () {
+      return this.list[0] || {}
+    }
+  },
+  methods: {
+    async onLoad () {
+      this.query.page++
+      // const res = await userFollowings(this.careQuery)
+      const res = await randomUser(this.careQuery)
+      this.list.push(...res.data.results)
+      //   // 加载状态结束
+      this.loading = false
+      this.finished =
+        !res.data.results.length || this.list.length >= res.data.total_count
+    }
+  }
 }
 </script>
 <style lang="less" scoped>
@@ -82,6 +124,7 @@ export default {
       border-radius: 50%;
       border: 1px solid #fff;
       margin-right: 20px;
+      overflow: hidden;
     }
     .top-right {
       flex: 1;
@@ -132,6 +175,7 @@ export default {
         height: 37px;
         border-radius: 50%;
         margin-right: 7px;
+        overflow: hidden;
       }
       .name {
         font-size: 14px;

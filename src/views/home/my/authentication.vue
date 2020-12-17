@@ -107,7 +107,7 @@ export default {
     },
     // 第二步 反面
     stetTwoBack (v) {
-      this.imgArr.stetTwoFaceImg = v
+      this.imgArr.stetTwoBackImg = v
     }
   }
 }
