@@ -8,8 +8,8 @@ export const appArticles = ({ channelId, withTop }) => {
     url: '/app/v1_1/articles',
     method: 'GET',
     params: {
-      channel_id,
-      with_top,
+      channel_id: channelId,
+      with_top: withTop,
       timestamp: new Date().getTime()
     },
     unNeedToken: true

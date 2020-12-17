@@ -124,8 +124,8 @@ router.beforeEach(async (to, from, next) => {
 router.afterEach(async to => {
   console.log('to:', to)
   const tk = token.get()
-  if (!store.state.isLogin && tk && tk.token) {
-    store.dispatch('refreshUserInfo') // 刷新用户信息
+  if (!Store.state.isLogin && tk && tk.token) {
+    Store.dispatch('refreshUserInfo') // 刷新用户信息
   }
 })
 
