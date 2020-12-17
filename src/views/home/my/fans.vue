@@ -7,7 +7,7 @@
             v-for="(item, index) in selectList"
             :key="index"
             :class="{ active: index === activeIndex }"
-            @click="activeIndex = index"
+            @click="changeItem(index)"
           >
             <p>{{ item }}</p>
           </li>
@@ -36,10 +36,9 @@
                 </div>
               </div>
             </div>
-            <van-button v-if="item.mutual_follow" class="red"
-              >已关注</van-button
+            <van-button class="blue" @click="cacelCare(index)"
+              >取消关注</van-button
             >
-            <van-button v-else class="gray">取消关注</van-button>
           </van-cell>
         </van-list>
       </div>
@@ -78,7 +77,6 @@
 <script>
 // import { userFollowings, userFans } from '@/api/user'
 import { randomUser } from '@/api/test'
-import { randPic } from '@/utils/tool'
 
 const CARE = 0 // 关注
 const FANS = 1 // 粉丝
@@ -106,10 +104,26 @@ export default {
         per_page: 10
       },
       careList: [],
-      fansList: []
+      fansList: [],
+      scroll: 0 // 滚动距离
     }
   },
   methods: {
+    // 获取滚动距离
+    scrollDis () {
+      return (
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+      )
+    },
+    changeItem (index) {
+      const tmp = this.scrollDis()
+      window.scrollTo(0, this.scroll)
+      this.activeIndex = index
+      this.scroll = tmp
+    },
     // 关注
     async careonLoad () {
       this.careQuery.page++
@@ -133,30 +147,10 @@ export default {
       this.fansfinished =
         !res.data.results.length || this.fansList.length >= res.data.total_count
     },
-    rand () {
-      return randPic()
+    // 取消关注
+    cacelCare (index) {
+      this.fansList.splice(index, 1)
     }
-    // 后端接口垃圾，临时测试数据
-    // test () {
-    //   const dt = []
-    //   let start = new Date().getTime()
-    //   const end = start + 10
-    //   for (; start <= end; start++) {
-    //     dt.push({
-    //       id: start,
-    //       name: Math.floor(Math.random() * 100000),
-    //       photo: randPic(),
-    //       fans_count: Math.floor(Math.random() * 1000),
-    //       mutual_follow: Boolean(Math.floor(Math.random() * 100) % 2)
-    //     })
-    //   }
-    //   return {
-    //     data: {
-    //       results: dt
-    //     },
-    //     total_count: 100
-    //   }
-    // }
   },
   created () {
     this.activeIndex === CARE ? this.careonLoad() : this.fansonLoad()
@@ -219,6 +213,10 @@ export default {
       }
       &.gray {
         color: #999999;
+      }
+      &.blue {
+        color: #fff;
+        background: #6bb6ff;
       }
     }
   }

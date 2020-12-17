@@ -49,10 +49,10 @@
               <h4 class="title van-multi-ellipsis--l2">
                 {{ item.intro }}
               </h4>
-              <div class="content">
+              <div class="content" @click="preview(item.pic)">
                 <van-image
                   class="img"
-                  v-for="(k, i) in item.pic.slice(0, 3)"
+                  v-for="(k, i) in item.pic"
                   :key="i"
                   :src="k"
                 />
@@ -71,6 +71,7 @@
 </template>
 <script>
 import { randomUser } from '@/api/test'
+import { ImagePreview } from 'vant'
 
 export default {
   name: 'user-page',
@@ -100,6 +101,9 @@ export default {
       this.loading = false
       this.finished =
         !res.data.results.length || this.list.length >= res.data.total_count
+    },
+    preview (imgarr) {
+      ImagePreview(imgarr)
     }
   }
 }
