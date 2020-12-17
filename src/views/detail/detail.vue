@@ -98,7 +98,10 @@
             <div class="com-item1">
               <div class="com-name">{{ item.aut_name }}</div>
               <div class="give-like">
-                <van-icon name="good-job-o" />{{ item.like_count }}
+                <van-icon
+                  :name="item.is_liking ? 'good-job' : 'good-job-o'"
+                  @click="onLiking(item)"
+                />{{ item.like_count }}
               </div>
             </div>
             <div class="com-txt">{{ item.content }}</div>
@@ -119,6 +122,7 @@
         <van-icon
           :name="comList.is_collected ? 'like' : 'like-o'"
           :class="{ tored: comList.is_collected }"
+          @click="collectAct"
         />
         <van-icon name="share-o" />
       </div>
@@ -130,22 +134,59 @@
         placeholder="歪日Σσ(・Д・；)我我我什么都没做!!!"
         rows="4"
       ></van-field>
-      <span class="send" @click="onSend">发送</span>
+      <span
+        class="send"
+        @click="onSend"
+        :class="{ tored: inputValue.length > 0 }"
+        >发送</span
+      >
     </van-popup>
     <van-popup v-model="showHuiFu" position="bottom">
+      <div class="now">当前评论</div>
+      <div class="replay" v-if="huiFuData">
+        <div class="left-data">
+          <img src="../../assets/empty.jpg" alt="" />
+        </div>
+        <div class="right-data">
+          <div class="t1">
+            <div class="d-title">{{ huiFuData.aut_name }}</div>
+            <div class="d-like">
+              <van-icon name="like-o" />
+              <div class="d-num">{{ huiFuData.like_count }}</div>
+            </div>
+          </div>
+          <div class="t2">评论:{{ huiFuData.content }}</div>
+          <div class="t3">
+            <div class="t31">{{ huiFuData.pubdate | formatTime }}</div>
+            <div class="t32">{{ huiFuData.reply_count }}回复</div>
+          </div>
+        </div>
+      </div>
       <van-field
         v-model="inputVal"
         type="textarea"
         placeholder="歪日Σσ(・Д・；)我我我什么都没做!!!"
         rows="4"
       ></van-field>
-      <span class="send" @click="onRemake">发送</span>
+      <span
+        class="send"
+        @click="onRemake"
+        :class="{ tored: inputValue.length > 0 }"
+        >发送</span
+      >
     </van-popup>
   </div>
 </template>
 
 <script>
-import { userArticles, giveLike, disLike, replyComments } from '@/api/news'
+import {
+  userArticles,
+  giveLike,
+  disLike,
+  replyComments,
+  collectArticle,
+  commentLike
+} from '@/api/news'
 import { followings } from '@/api/user'
 import { mapState } from 'vuex'
 export default {
@@ -162,7 +203,9 @@ export default {
       inputValue: '', // 用户输入的字
       remarkList: '', // 用户评论
       showHuiFu: false,
-      inputVal: ''
+      inputVal: '',
+      huiFuData: '',
+      replyData: ''
     }
   },
   async created () {
@@ -175,7 +218,13 @@ export default {
     async refreshData () {
       const res = await userArticles(this.acticleId)
       this.comList = res.data
-      console.log(this.comList)
+      // console.log(this.comList)
+    },
+    // 收藏文章和取消收藏文章
+    async collectAct () {
+      await collectArticle(this.acticleId, this.comList.is_collected)
+      // console.log(res)
+      this.refreshData()
     },
     // 取消关注用户 和 关注用户
     async onFollow (isTrue) {
@@ -199,10 +248,22 @@ export default {
       this.$toast.loading({
         duration: 0
       })
-      const res = await disLike(this.comList.art_id, isTrue)
-      console.log(res)
+      await disLike(this.comList.art_id, isTrue)
+      // console.log(res)
       this.refreshData()
       this.$toast.success('修改成功')
+    },
+    // 对评论点赞
+    async onLiking (item) {
+      console.log(item)
+      // this.$toast.loading({
+      //   duration: 0
+      // })
+      await commentLike(item.com_id, item.is_liking)
+      // console.log(res)
+      this.onDiscuss(false, 'a')
+      // this.$toast.success('修改成功')
+      console.log(item.is_liking)
     },
     // 评论回复
     onSend () {
@@ -211,17 +272,33 @@ export default {
           duration: 0
         })
         this.onDiscuss(true, 'a')
-        this.onDiscuss(false)
+        this.onDiscuss(false, 'a')
         this.showInput = false
         this.inputValue = ''
         this.$toast.success('发布成功')
       }
     },
-    // huiFu (item) {
-    //   this.showInput = true
-    //   this.onSend(item)
-    //   console.log(item)
-    // },
+    // 回复评论
+    onRemake () {
+      if (this.inputVal.length > 0) {
+        // this.$toast.loading({
+        //   duration: 0
+        // })
+        this.onDiscuss(false, 'c')
+        this.onDiscuss(true, 'c', this.huiFuData)
+        this.$toast.fail({
+          message: '接口坏了\nㄟ(;´_｀)ㄏ'
+        })
+        this.showHuiFu = false
+        this.inputVal = ''
+        // this.$toast.success('发布成功')
+      }
+    },
+    huiFu (item) {
+      this.showHuiFu = true
+      this.huiFuData = item
+      // console.log(this.huiFuData)
+    },
     async onDiscuss (isTrue, type, item) {
       // console.log(item)
       if (isTrue) {
@@ -234,15 +311,15 @@ export default {
             isTrue
           )
         } else {
+          // console.log(item)
           await replyComments(
             {
               target: item.aut_id,
-              content: this.inputValue,
+              content: this.inputVal,
               aid: item.aut_id
             },
             isTrue
           )
-          // console.log(ress)
         }
       } else {
         const res = await replyComments(
@@ -257,6 +334,8 @@ export default {
         } else {
           this.replyData = res.data
         }
+        // console.log(res)
+        // console.log(this.replyData)
       }
     }
   },
@@ -268,6 +347,10 @@ export default {
 
 <style lang="less" scoped>
 .detail {
+  background: url('../../assets/timg.jpg') no-repeat;
+  background-color: rgba(0, 0, 0, 0.1);
+  background-size: cover;
+  font-family: YouYuan, Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
   ::v-deep .van-icon {
     color: #fff;
     font-size: 22px;
@@ -500,7 +583,7 @@ export default {
     }
   }
   .tored {
-    color: #ed5a65 !important;
+    color: deeppink !important;
   }
   .tored1 {
     color: #ed5a65 !important;
@@ -519,9 +602,79 @@ export default {
     }
     .send {
       float: right;
+      font-family: YouYuan, Microsoft YaHei Regular,
+        Microsoft YaHei Regular-Regular;
+      font-weight: 400;
       font-size: 16px;
       color: #b4b4bd;
       margin-top: 6px;
+    }
+    .now {
+      margin: 0 -15px;
+      padding-bottom: 10px;
+      text-indent: 32px;
+      line-height: 20px;
+      border-bottom: 1px solid #ccc;
+      font-size: 16px;
+      color: #ccc;
+    }
+    .replay {
+      display: flex;
+      justify-content: space-between;
+      .left-data {
+        width: 36px;
+        height: 36%;
+        img {
+          width: 100%;
+          border-radius: 50%;
+        }
+      }
+      .right-data {
+        flex: 1;
+        margin-left: 10px;
+        .t1 {
+          display: flex;
+          justify-content: space-between;
+          color: #ccc;
+          .d-title {
+            font-size: 14px;
+            margin-top: 10px;
+          }
+          .d-like {
+            display: flex;
+            margin-top: 10px;
+            .van-icon {
+              font-size: 14px;
+              color: #333;
+            }
+            .d-num {
+              color: #ccc;
+              font-size: 12px;
+              margin-left: 4px;
+            }
+          }
+        }
+        .t2 {
+          font-size: 14px;
+          color: deeppink;
+          margin-bottom: 10px;
+        }
+        .t3 {
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          margin-bottom: 6px;
+          .t31 {
+            margin-right: 10px;
+          }
+          .t32 {
+            font-size: 14px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background-color: #ccc;
+          }
+        }
+      }
     }
   }
 }
