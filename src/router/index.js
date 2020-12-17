@@ -99,12 +99,16 @@ const routes = [
   {
     path: '/test',
     component: resolve => require(['@/test/index'], resolve),
-    redirect: '/test/camera',
+    redirect: '/test/index',
     // 子路由
     children: [
       {
         path: 'index',
         component: resolve => require(['@/test/camera'], resolve)
+      },
+      {
+        path: 'pic',
+        component: resolve => require(['@/test/pic'], resolve)
       }
     ]
   }

@@ -27,7 +27,7 @@
     </section>
     <ul class="tip">
       <li class="tip-item"><span>认证：</span>微软认证开发者</li>
-      <li class="tip-item"><span>简介：</span>微软认证开发者</li>
+      <li class="tip-item van-ellipsis"><span>简介：</span> {{ user.intro }}</li>
     </ul>
     <section class="pro">
       <van-list
