@@ -81,7 +81,7 @@ const routes = [
         component: resolve => require(['@/views/home/my/robot'], resolve) // 小智同学
       },
       {
-        path: 'userinfo',
+        path: 'userinfo/:id',
         component: resolve => require(['@/views/home/my/userInfo'], resolve) // 个人页面
       },
       {

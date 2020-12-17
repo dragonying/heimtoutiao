@@ -110,7 +110,9 @@
 </template>
 <script>
 import { MSG_TYPE } from '@/config/enum'
-import tuling from '@/utils/robot'
+import { tuling } from '@/api/test'
+import { mapState } from 'vuex'
+
 export default {
   name: 'feed-back',
   data () {
@@ -136,6 +138,7 @@ export default {
   },
   watch: {},
   computed: {
+    ...mapState(['userInfo']),
     // 有输入内容就显示
     showSendBtn () {
       return this.text.length > 0
@@ -157,7 +160,7 @@ export default {
     // 输入框消息
     async enter () {
       this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, this.text)
-      const res = await tuling.chat(this.$store.state.userInfo.id, this.text)
+      const res = await tuling(this.userInfo.id, this.text)
       this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, res.data.data, true)
       // 消息滚动底部
       this.$nextTick(() => {

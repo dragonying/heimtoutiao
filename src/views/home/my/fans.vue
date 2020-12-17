@@ -7,7 +7,7 @@
             v-for="(item, index) in selectList"
             :key="index"
             :class="{ active: index === activeIndex }"
-            @click="activeIndex = index"
+            @click="changeItem(index)"
           >
             <p>{{ item }}</p>
           </li>
@@ -15,7 +15,7 @@
       </template>
     </navBar>
     <section class="content">
-      <div v-show="activeIndex === TYPE.FANS">
+      <div v-show="activeIndex === TYPE.CARE">
         <van-list
           class="item"
           v-model="fansloading"
@@ -25,22 +25,24 @@
         >
           <van-cell center v-for="(item, index) in fansList" :key="index">
             <div slot="title">
-              <div class="author">
-                <van-image class="avatar" :src="rand()" />
+              <div
+                class="author"
+                @click="$router.push(`/user/userinfo/${item.id}`)"
+              >
+                <van-image class="avatar" :src="item.photo" />
                 <div>
-                  <h5 class="name">{{ item.name }}</h5>
+                  <h5 class="name van-ellipsis">{{ item.name }}</h5>
                   <div class="count">粉丝数{{ item.fans_count }}</div>
                 </div>
               </div>
             </div>
-            <van-button v-if="item.mutual_follow" class="red"
-              >已关注</van-button
+            <van-button class="blue" @click="cacelCare(index)"
+              >取消关注</van-button
             >
-            <van-button v-else class="gray">取消关注</van-button>
           </van-cell>
         </van-list>
       </div>
-      <div v-show="activeIndex === TYPE.CARE">
+      <div v-show="activeIndex === TYPE.FANS">
         <van-list
           class="item"
           v-model="careloading"
@@ -50,16 +52,22 @@
         >
           <van-cell center v-for="(item, index) in careList" :key="index">
             <div slot="title">
-              <div class="author">
-                <van-image class="avatar" :src="rand()" />
+              <div
+                class="author"
+                @click="$router.push(`/user/userinfo/${item.id}`)"
+              >
+                <van-image class="avatar" :src="item.photo" />
                 <div>
-                  <h5 class="name">{{ item.name }}</h5>
+                  <h5 class="name van-ellipsis">{{ item.name }}</h5>
                   <div class="count">粉丝数{{ item.fans_count }}</div>
                 </div>
               </div>
             </div>
-            <van-button v-if="item.mutual_follow" class="red">关注</van-button>
-            <van-button v-else class="gray">互相关注</van-button>
+            <van-button
+              :class="item.mutual_follow ? 'red' : 'gray'"
+              @click="item.mutual_follow = !item.mutual_follow"
+              >{{ item.mutual_follow ? '关注' : '互相关注' }}</van-button
+            >
           </van-cell>
         </van-list>
       </div>
@@ -68,7 +76,7 @@
 </template>
 <script>
 // import { userFollowings, userFans } from '@/api/user'
-import { randPic } from '@/utils/tool'
+import { randomUser } from '@/api/test'
 
 const CARE = 0 // 关注
 const FANS = 1 // 粉丝
@@ -84,7 +92,7 @@ export default {
       carefinished: false,
       fansloading: false,
       fansfinished: false,
-      activeIndex: Number(this.$route.query.active),
+      activeIndex: Number(this.$route.query.active) || 0,
       selectList: ['关注', '粉丝'],
       TYPE: TYPE,
       careQuery: {
@@ -96,15 +104,31 @@ export default {
         per_page: 10
       },
       careList: [],
-      fansList: []
+      fansList: [],
+      scroll: 0 // 滚动距离
     }
   },
   methods: {
+    // 获取滚动距离
+    scrollDis () {
+      return (
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0
+      )
+    },
+    changeItem (index) {
+      const tmp = this.scrollDis()
+      window.scrollTo(0, this.scroll)
+      this.activeIndex = index
+      this.scroll = tmp
+    },
     // 关注
     async careonLoad () {
       this.careQuery.page++
       // const res = await userFollowings(this.careQuery)
-      const res = this.test()
+      const res = await randomUser(this.careQuery)
       this.careList.push(...res.data.results)
       //   // 加载状态结束
       this.careloading = false
@@ -115,38 +139,17 @@ export default {
     async fansonLoad () {
       this.fansQuery.page++
       // await userFans(this.fansQuery)
-
-      // const res = await userFollowings(this.fansQuery)
-      const res = this.test()
+      const res = await randomUser(this.fansQuery)
+      console.log(res)
       this.fansList.push(...res.data.results)
       //   // 加载状态结束
       this.fansloading = false
       this.fansfinished =
         !res.data.results.length || this.fansList.length >= res.data.total_count
     },
-    rand () {
-      return randPic()
-    },
-    // 后端接口垃圾，临时测试数据
-    test () {
-      const dt = []
-      let start = new Date().getTime()
-      const end = start + 10
-      for (; start <= end; start++) {
-        dt.push({
-          id: start,
-          name: Math.floor(Math.random() * 100000),
-          photo: randPic(),
-          fans_count: Math.floor(Math.random() * 1000),
-          mutual_follow: Boolean(Math.floor(Math.random() * 100) % 2)
-        })
-      }
-      return {
-        data: {
-          results: dt
-        },
-        total_count: 100
-      }
+    // 取消关注
+    cacelCare (index) {
+      this.fansList.splice(index, 1)
     }
   },
   created () {
@@ -190,7 +193,7 @@ export default {
       }
       .name {
         font-size: 12px;
-        font-weight: bold;
+        font-weight: 600;
         color: #222222;
       }
       .count {
@@ -210,6 +213,10 @@ export default {
       }
       &.gray {
         color: #999999;
+      }
+      &.blue {
+        color: #fff;
+        background: #6bb6ff;
       }
     }
   }
