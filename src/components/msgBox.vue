@@ -1,17 +1,12 @@
 <template>
   <div class="msgBox">
     <div class="info" v-for="(item, index) in msg" :key="index">
-      <div class="msg" :class="isAdmin(item.userId) ? 'user' : 'other'">
-        <img class="avatar" :src="users[item.userId].avatar" />
+      <div class="msg" :class="item.robot ? 'other' : 'user'">
+        <img class="avatar" :src="item.robot ? robot.avatar : require('@/assets/images/avatar/28.jpg')" />
         <!--文本类型-->
         <div class="msg-box" v-if="item.type === MSG_TYPE.MSG_TYPE_TXT">
-          <div
-            :class="isAdmin(item.userId) ? 'right-triangle' : 'left-triangle'"
-          ></div>
-          <div
-            class="txt"
-            :class="isAdmin(item.userId) ? 'right-txt' : 'left-txt'"
-          >
+          <div :class="item.robot ? 'left-triangle' : 'right-triangle'"></div>
+          <div class="txt" :class="item.robot ? 'left-txt' : 'right-txt'">
             {{ item.content }}
           </div>
         </div>
@@ -20,28 +15,12 @@
           <img class="img" :src="item.content" />
         </div>
       </div>
-
-      <!---<div class="msg user">
-        <img class="avatar" src="@/assets/images/avatar/29.jpg" />
-        <div class="msg-box">
-          <div class="right-triangle"></div>
-          <div class="txt right-txt">
-            he很费劲拉法基熬
-          </div>
-        </div>
-      </div>
-
-      <div class="msg user" v-for="(item, index) in fileList" :key="index">
-        <img class="avatar" src="@/assets/images/avatar/29.jpg" />
-        <div class="msg-box">
-          <img class="img" :src="item" />
-        </div>
-      </div>-->
     </div>
   </div>
 </template>
 <script>
 import { MSG_TYPE } from '@/config/enum'
+import { mapState } from 'vuex'
 
 export default {
   name: 'msgBox',
@@ -51,40 +30,24 @@ export default {
       default () {
         return []
       }
-    },
-    users: {
-      type: Array,
-      default () {
-        return []
-      }
     }
   },
   data () {
     return {
-      MSG_TYPE: MSG_TYPE
+      MSG_TYPE: MSG_TYPE,
+      robot: {
+        name: '小雪',
+        avatar: require('@/assets/images/avatar/26.jpg')
+      }
     }
   },
   computed: {
-    isAdmin () {
-      return v => {
-        return v === 0 // 0 代表自己
-      }
-    }
+    ...mapState(['userInfo'])
   }
 }
 </script>
 <style lang="less" scoped>
 .msgBox {
-//   position: absolute;
-//   top: 46px;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-//   padding: 10px;
-//   padding-bottom: 48px;
-//   background-color: #ebebeb;
-//   overflow: auto;
-
   .msg {
     display: flex;
     margin-bottom: 13px;

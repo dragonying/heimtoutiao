@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '@/store'
+import { token } from '@/utils/storage'
 // 导入组件
 const Login = () => import('../views/login/login.vue')
 const Home = () => import('../views/home/home.vue')
@@ -116,6 +118,10 @@ router.beforeEach(async (to, from, next) => {
 // 全局后置守卫
 router.afterEach(async to => {
   console.log('to:', to)
+  const tk = token.get()
+  if (!store.state.isLogin && tk && tk.token) {
+    store.dispatch('refreshUserInfo') // 刷新用户信息
+  }
 })
 
 export default router

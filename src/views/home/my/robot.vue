@@ -12,7 +12,7 @@
         backgroundSize: 'cover'
       }"
     >
-      <msgBox :msg="chatItem" :users="users"></msgBox>
+      <msgBox :msg="chatItem"></msgBox>
     </section>
     <section class="footer" :class="{ show: showTool }">
       <div class="chat-input">
@@ -25,7 +25,9 @@
           @focus="showTool = false"
         />
         <i class="iconfont">&#xe605;</i>
-        <van-button v-if="showSendBtn" class="send-btn">发送</van-button>
+        <van-button v-if="showSendBtn" class="send-btn" @click="enter"
+          >发送</van-button
+        >
         <i v-else class="iconfont" @click="showTool = true">&#xe7d9;</i>
       </div>
       <div class="tool">
@@ -108,6 +110,7 @@
 </template>
 <script>
 import { MSG_TYPE } from '@/config/enum'
+import tuling from '@/utils/robot'
 export default {
   name: 'feed-back',
   data () {
@@ -115,24 +118,18 @@ export default {
       coverImgUrl: require('@/assets/images/bg.jpg'), // 背景图
       msg_type: MSG_TYPE,
       showTool: false,
-      selectedUserId: 1, // 选中的用户
-      users: [
-        {
-          name: '小雪',
-          avatar: require('@/assets/images/avatar/26.jpg')
-        },
-        {
-          name: '小闵',
-          avatar: require('@/assets/images/avatar/28.jpg')
-        }
-      ],
       text: '', // 输入框输入的内容
       fileList: [], // 图片文件列表
       chatItem: [
         {
           type: MSG_TYPE.MSG_TYPE_TXT,
           content: '你好，你想对我说什么？',
-          userId: 1
+          robot: true
+        },
+        {
+          type: MSG_TYPE.MSG_TYPE_TXT,
+          content: '不想？',
+          robot: false
         }
       ] // 聊天内容
     }
@@ -146,19 +143,27 @@ export default {
   },
   methods: {
     // 添加消息
-    appdMsg (type, content) {
+    appdMsg (type, content, isRobot = false) {
       this.chatItem.push({
         userId: this.selectedUserId,
         type: type,
-        content: content
+        content: content,
+        robot: isRobot
       })
       // 触发失去焦点，实现键盘隐藏
       this.$refs.input.blur()
       this.showTool = false
     },
     // 输入框消息
-    enter () {
+    async enter () {
       this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, this.text)
+      const res = await tuling.chat(this.$store.state.userInfo.id, this.text)
+      this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, res.data.data, true)
+      // 消息滚动底部
+      this.$nextTick(() => {
+        const msg = this.$refs.chatBox // 获取对象
+        msg.scrollTop = msg.scrollHeight // 滚动高度
+      })
       this.text = ''
     },
     // 上传图片
