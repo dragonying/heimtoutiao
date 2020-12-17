@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-<<<<<<< HEAD
 // 频道新闻推荐_V1.1
 // channel_id是 频道ID
 // timestamp 是 时间戳整数 单位毫秒 时间戳，请求新的推荐数据传当前的时间戳，请求历史推荐传指定的时间戳
@@ -16,7 +15,6 @@ export const appArticles = ({ channelId, withTop }) => {
     unNeedToken: true
   })
 }
-=======
 // 根据ID获得文章信息
 export const userArticles = id => {
   return request({
@@ -69,4 +67,3 @@ export const commentLike = (target, isDelete = false) => {
   isDelete ? (option.url += `/${target}`) : (option.data = { target })
   return request(option)
 }
->>>>>>> feature/detail
