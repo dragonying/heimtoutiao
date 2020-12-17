@@ -33,6 +33,10 @@
                 </div>
               </div>
             </div>
+            <van-button v-if="item.mutual_follow" class="red"
+              >已关注</van-button
+            >
+            <van-button v-else class="gray">取消关注</van-button>
           </van-cell>
         </van-list>
       </div>
@@ -63,7 +67,7 @@
   </div>
 </template>
 <script>
-import { userFollowings, userFans } from '@/api/user'
+// import { userFollowings, userFans } from '@/api/user'
 import { randPic } from '@/utils/tool'
 
 const CARE = 0 // 关注
@@ -99,8 +103,8 @@ export default {
     // 关注
     async careonLoad () {
       this.careQuery.page++
-      const res = await userFollowings(this.careQuery)
-      console.log(res)
+      // const res = await userFollowings(this.careQuery)
+      const res = this.test()
       this.careList.push(...res.data.results)
       //   // 加载状态结束
       this.careloading = false
@@ -110,9 +114,10 @@ export default {
     // 粉丝
     async fansonLoad () {
       this.fansQuery.page++
-      await userFans(this.fansQuery)
+      // await userFans(this.fansQuery)
 
-      const res = await userFollowings(this.fansQuery)
+      // const res = await userFollowings(this.fansQuery)
+      const res = this.test()
       this.fansList.push(...res.data.results)
       //   // 加载状态结束
       this.fansloading = false
@@ -121,6 +126,27 @@ export default {
     },
     rand () {
       return randPic()
+    },
+    // 后端接口垃圾，临时测试数据
+    test () {
+      const dt = []
+      let start = new Date().getTime()
+      const end = start + 10
+      for (; start <= end; start++) {
+        dt.push({
+          id: start,
+          name: Math.floor(Math.random() * 100000),
+          photo: randPic(),
+          fans_count: Math.floor(Math.random() * 1000),
+          mutual_follow: Boolean(Math.floor(Math.random() * 100) % 2)
+        })
+      }
+      return {
+        data: {
+          results: dt
+        },
+        total_count: 100
+      }
     }
   },
   created () {

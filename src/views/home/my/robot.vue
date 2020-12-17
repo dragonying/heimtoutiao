@@ -158,7 +158,7 @@ export default {
     async enter () {
       this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, this.text)
       const res = await tuling.chat(this.$store.state.userInfo.id, this.text)
-      this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, res.data.jokes[0], true)
+      this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, res.data.data, true)
       // 消息滚动底部
       this.$nextTick(() => {
         const msg = this.$refs.chatBox // 获取对象

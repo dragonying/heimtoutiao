@@ -9,7 +9,11 @@
         />
         <div class="u-middle">
           <div class="name">{{ userInfo.name }}</div>
-          <van-button class="applyAudit">申请认证</van-button>
+          <van-button
+            class="applyAudit"
+            @click="$router.push('/user/authentication')"
+            >申请认证</van-button
+          >
         </div>
         <div class="u-right">
           <van-icon name="fire-o" />
