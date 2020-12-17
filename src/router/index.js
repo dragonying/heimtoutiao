@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Store from '@/store'
+import { token } from '@/utils/storage'
+// import { Toast } from 'vant'
 // 导入组件
 const Login = () => import('../views/login/login.vue')
 const Home = () => import('../views/home/home.vue')
@@ -109,9 +112,13 @@ const router = new VueRouter({
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
-  console.log('from:', from)
+  // console.log('from:', from)
   console.log('to:', to)
+  // console.log(('Store.islogin', Store.state.isLogin))
   next()
+  if (!Store.state.isLogin && token.get()) {
+    Store.dispatch('refreshUserInfo')
+  }
 })
 // 全局后置守卫
 router.afterEach(async to => {
