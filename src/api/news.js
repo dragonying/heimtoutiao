@@ -11,7 +11,7 @@ export const appArticles = ({ channelId, withTop }) => {
     params: {
       channel_id: channelId,
       with_top: withTop,
-      timestamp: (new Date()).getTime()
+      timestamp: 1556789000001
     },
     unNeedToken: true
   })

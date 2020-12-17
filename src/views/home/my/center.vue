@@ -1,30 +1,30 @@
 <template>
   <div class="user-center">
     <navBar title="个人信息" to="/home/my"></navBar>
-    <div v-if="userInfo">
+    <div v-if="tempUserInfo">
       <van-cell-group>
         <cell
           title="头像"
-          :name="userInfo.photo"
+          :name="tempUserInfo.photo"
           type="img"
           @click.native="showUploadTip = true"
         ></cell>
         <cell
           title="昵称"
-          :name="userInfo.name"
+          :name="tempUserInfo.name"
           @click.native="nicknameShow = true"
         ></cell>
-        <cell title="介绍" :name="userInfo.intro"></cell>
+        <cell title="介绍" :name="tempUserInfo.intro"></cell>
       </van-cell-group>
       <van-cell-group>
         <cell
           title="性别"
-          :name="genderColumns[userInfo.gender]"
+          :name="genderColumns[tempUserInfo.gender]"
           @click.native="genderShow = true"
         ></cell>
         <cell
           title="生日"
-          :name="userInfo.birthday"
+          :name="tempUserInfo.birthday"
           @click.native="showBrithday = true"
         ></cell>
       </van-cell-group>
@@ -37,7 +37,7 @@
           :columns="Object.values(genderColumns)"
           @confirm="genderConfirm"
           @cancel="genderCancel"
-          :default-index="userInfo.gender"
+          :default-index="tempUserInfo.gender"
         ></van-picker>
       </van-popup>
     </div>
