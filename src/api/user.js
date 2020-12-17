@@ -40,10 +40,12 @@ export const freshAuthorizations = () => {
 
 // 取消关注用户 和 关注用户
 export const followings = (target, isDelete = false) => {
-  return request({
-    url: ' /app/v1_0/user/followings/' + target,
+  const option = {
+    url: '/app/v1_0/user/followings',
     method: isDelete ? 'DELETE' : 'POST'
-  })
+  }
+  isDelete ? (option.url += `/${target}`) : (option.data = { target })
+  return request(option)
 }
 
 // 取消拉黑用户
