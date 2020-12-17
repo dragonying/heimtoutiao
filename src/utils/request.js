@@ -12,6 +12,12 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(
   function (config) {
+    // console.log(config.method)
+    // if (['get', 'patch'].includes(config.method)) {
+    //   config.headers['Content-Type'] = 'application/json'
+    // } else {
+    //   config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    // }
     config.headers['Content-Type'] = 'application/json'
 
     // 默认需要token
