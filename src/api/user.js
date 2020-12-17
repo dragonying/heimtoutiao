@@ -30,8 +30,6 @@ export const channels = (target, isDelete = false) => {
   })
 }
 
-
-
 // 刷新用户token
 export const freshAuthorizations = () => {
   return request({

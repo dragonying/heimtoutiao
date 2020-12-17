@@ -10,9 +10,14 @@
       />
     </div>
     <div class="labelBox">
-      <van-tabs v-model="active" color="#2F97FA" line-width="20px" title-active-color="#000000">
+      <van-tabs
+        v-model="active"
+        color="#2F97FA"
+        line-width="20px"
+        title-active-color="#000000"
+      >
         <van-tab
-          v-for="(value,index) in info"
+          v-for="(value, index) in info"
           :key="index"
           :title="value.name"
           :name="value.id"
@@ -28,14 +33,14 @@
       finished-text="没有更多了ღ( ´･ᴗ･` )ღ"
       @load="onLoad"
     >
-      <div class="exhibition" v-for="(item,index) in list" :key="index">
-        <span>{{item.title}}</span>
+      <div class="exhibition" v-for="(item, index) in list" :key="index">
+        <span>{{ item.title }}</span>
         <div class="exhibitionImg">
           <ul>
             <li v-if="item.cover.images">
               <van-image
                 class="img"
-                v-for="(item2,index2) in item.cover.images"
+                v-for="(item2, index2) in item.cover.images"
                 :key="index2"
                 :src="item2"
               >
@@ -49,8 +54,8 @@
         <div class="details">
           <van-row>
             <van-col span="4" class="stick">置顶</van-col>
-            <van-col span="4" class="d1">{{item.aut_name}}</van-col>
-            <van-col span="4" class="d2">{{item.comm_count}}评论</van-col>
+            <van-col span="4" class="d1">{{ item.aut_name }}</van-col>
+            <van-col span="4" class="d2">{{ item.comm_count }}评论</van-col>
             <van-col span="4" class="d3">3小时前</van-col>
             <van-col span="8" class="d4">
               <van-icon name="cross" color="#777777" />
@@ -67,14 +72,15 @@
           <div class="compile" v-if="!compile" @click="add">完成</div>
         </div>
         <van-tag
-          v-for="(value,index) in info"
+          v-for="(value, index) in info"
           :key="index"
           color="#F4F5F6"
           size="large"
           type="primary"
           @close="close"
           class="showRecommend"
-        >{{value.name}}</van-tag>
+          >{{ value.name }}</van-tag
+        >
       </div>
       <div class="windows">
         <div class="topWindows">
@@ -87,14 +93,15 @@
           type="primary"
           @close="close"
           class="showRecommend"
-        >+ 理论</van-tag>
+          >+ 理论</van-tag
+        >
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { userChannels, allChannels } from '@/api/user' // 导入获取用户频道列表
+import { userChannels } from '@/api/user' // 导入获取用户频道列表
 import { appArticles } from '@/api/news' // 导入频道新闻推荐_v1.1
 // import loginVue from '../../login/login.vue'
 export default {
@@ -138,7 +145,9 @@ export default {
       this.showRecommend = false
     },
     async onLoad () {
-      (this.loading = false), (this.finished = false), (this.list = [])
+      this.loading = false
+      this.finished = false
+      this.list = []
       const res = await appArticles({
         channelId: this.active,
         withTop: 0
