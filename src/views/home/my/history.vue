@@ -2,21 +2,26 @@
   <div class="collection">
     <navBar to="/home/my" title="收藏/历史" />
     <van-tabs
+      sticky
+      offset-top="44px"
       v-model="activeIndex"
       title-active-color="#3296fa"
       color="#3296fa"
     >
-      <van-tab title="收藏" name="collection">
+      <van-tab title="收藏" name="collection" @click="changeItem('collection')">
         <van-list
           v-model="collectionloading"
           :finished="collectionfinished"
           finished-text="没有更多了"
-          @load="collectionOnLoad"
+          @load="loadData"
         >
           <div v-for="(item, index) in collectionList" :key="index">
             <div class="item">
               <div class="info">
-                <h4 class="title van-multi-ellipsis--l2">
+                <h4
+                  class="title van-multi-ellipsis--l2"
+                  @click="$router.push(`/detail/${item.art_id}`)"
+                >
                   {{ item.title }}
                 </h4>
                 <div class="content" @click="preview(item.cover.images)">
@@ -49,40 +54,48 @@
           </div>
         </van-list>
       </van-tab>
-      <van-tab title="历史" name="history">
+      <van-tab title="历史" name="history" @click="changeItem('history')">
         <van-list
           class="item"
           v-model="historyloading"
           :finished="historyfinished"
           finished-text="没有更多了"
-          @load="historyfinished"
+          @load="loadData"
         >
           <div v-for="(item, index) in historyList" :key="index">
             <div class="item">
-              <div class="author">
-                <van-image class="avatar" :src="item.photo" />
-                <div>
-                  <h5 class="name">{{ item.name }}</h5>
-                  <div class="time">{{ item.birthday }}</div>
-                </div>
-              </div>
               <div class="info">
-                <h4 class="title van-multi-ellipsis--l2">
-                  {{ item.intro }}
+                <h4
+                  class="title van-multi-ellipsis--l2"
+                  @click="$router.push(`/detail/${item.art_id}`)"
+                >
+                  {{ item.title }}
                 </h4>
-                <div class="content" @click="preview(item.pic)">
+                <div class="content" @click="preview(item.cover.images)">
                   <van-image
                     class="img"
-                    v-for="(k, i) in item.pic"
+                    v-for="(k, i) in item.cover.images"
                     :key="i"
                     :src="k"
                   />
                 </div>
+                <p class="push">
+                  <span>{{ item.aut_name }}</span
+                  ><span>{{ item.pubdate | formatTime }}</span>
+                </p>
               </div>
               <van-grid direction="horizontal" :column-num="3">
-                <van-grid-item icon="comment-o" text="评论" />
-                <van-grid-item icon="good-job-o" text="点赞" />
-                <van-grid-item icon="star-o" text="收藏" />
+                <van-grid-item
+                  icon="comment-o"
+                  :text="String(item.comm_count)"
+                />
+                <van-grid-item
+                  :class="{ red: item.is_liking }"
+                  icon="good-job-o"
+                  :text="item.is_liking ? '已赞' : '点赞'"
+                  @click="like(item)"
+                />
+                <van-grid-item icon="star-o" :text="String(item.like_count)" />
               </van-grid>
             </div>
           </div>
@@ -108,7 +121,7 @@ export default {
       collectionfinished: false,
       historyloading: false,
       historyfinished: false,
-      activeIndex: Number(this.$route.query.active) || COLLECTION,
+      activeIndex: this.$route.params.type || COLLECTION,
       TYPE: TYPE,
       collectionQuery: {
         page: 0,
@@ -138,6 +151,7 @@ export default {
       window.scrollTo(0, this.scroll)
       this.activeIndex = index
       this.scroll = tmp
+      this.loadData()
     },
     // 收藏
     async collectionOnLoad () {
@@ -165,12 +179,16 @@ export default {
     async like (item) {
       await giveLike(item.art_id, item.is_liking)
       item.is_liking = !item.is_liking
+    },
+    // 数据加载
+    loadData () {
+      this.activeIndex === HISTORY
+        ? this.historyOnLoad()
+        : this.collectionOnLoad()
     }
   },
   created () {
-    this.activeIndex === HISTORY
-      ? this.historyOnLoad()
-      : this.collectionOnLoad()
+    this.loadData()
   }
 }
 </script>
