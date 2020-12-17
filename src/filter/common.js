@@ -14,7 +14,7 @@ dayjs.locale('zh-cn')
 
 // 时间格式化
 export const formatTime = v => {
-  return dayjs().from(dayjs(v))
+  return dayjs(v).format('YYYY-MM-DD')
 }
 
 // 图片路径

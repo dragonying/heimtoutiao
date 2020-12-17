@@ -21,7 +21,9 @@
     </div>
     <div class="user" v-if="active === 0">
       <div class="auth">
-        <img src="@/assets/images/girl.png" />
+        <uploadAvatar @input="stepOne">
+          <img slot="title" :src="imgArr.stepOneImg" />
+        </uploadAvatar>
       </div>
       <a class="btn" href="javascript:void(0);">返回上一步</a>
     </div>
@@ -31,15 +33,19 @@
         <div class="idcard">
           <div class="img">
             <div class="img-box">
-              <img src="@/assets/images/idCardface.png" />
+              <img :src="imgArr.stetTwoFaceImg" />
             </div>
-            <p>上传身份证正面</p>
+            <uploadAvatar @input="stetTwoFace">
+              <p slot="title">上传身份证正面</p>
+            </uploadAvatar>
           </div>
           <div class="img">
             <div class="img-box">
-              <img src="@/assets/images/idCardback.png" />
+              <img :src="imgArr.stetTwoBackImg" />
             </div>
-            <p>上传身份证反面</p>
+            <uploadAvatar @input="stetTwoBack">
+              <p slot="title">上传身份证反面</p>
+            </uploadAvatar>
           </div>
         </div>
         <div class="hold">
@@ -71,7 +77,7 @@
       </div>
       <a class="btn" href="javascript:void(0);">上传手持身份证照片</a>
     </div>
-    <van-button block>下一步</van-button>
+    <van-button block @click="active++">下一步</van-button>
   </div>
 </template>
 <script>
@@ -79,7 +85,29 @@ export default {
   name: 'authorize',
   data () {
     return {
-      active: 2 // 0实名认证 1脸部识别 2 认证完成
+      active: 0, // 0实名认证 1脸部识别 2 认证完成,
+      imgArr: {
+        stepOneImg: require('@/assets/images/girl.png'),
+        stetTwoFaceImg: require('@/assets/images/idCardface.png'),
+        stetTwoBackImg: require('@/assets/images/idCardback.png')
+      }
+    }
+  },
+  components: {
+    uploadAvatar: () => import('@/components/uploadAvatar')
+  },
+  methods: {
+    // 第一步
+    stepOne (v) {
+      this.imgArr.stepOneImg = v
+    },
+    // 第二步正面
+    stetTwoFace (v) {
+      this.imgArr.stetTwoFaceImg = v
+    },
+    // 第二步 反面
+    stetTwoBack (v) {
+      this.imgArr.stetTwoFaceImg = v
     }
   }
 }
@@ -120,8 +148,9 @@ export default {
       margin: 0 auto;
       background-color: black;
       img {
-        width: 100%;
-        height: 100%;
+        width: 286px;
+        height: 307px;
+        vertical-align: bottom;
       }
       margin-bottom: 43px;
     }
@@ -159,7 +188,7 @@ export default {
         background: #ffffff;
         border: 1px dashed #cccccc;
         padding: 15px 10px;
-        margin-bottom: 14px;
+        margin-bottom: 7px;
         img {
           width: 100%;
           height: 100%;

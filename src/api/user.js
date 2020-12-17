@@ -114,12 +114,10 @@ export const usersInfo = target => {
 }
 
 // 获取用户个人资料
-// target integer 必须 关注目标
-export const usersDetail = target => {
+export const usersDetail = () => {
   return request({
     url: '/app/v1_0/user/profile',
-    method: 'GET',
-    params: { target: target }
+    method: 'GET'
   })
 }
 
