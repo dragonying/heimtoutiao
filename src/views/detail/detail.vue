@@ -162,6 +162,30 @@
           </div>
         </div>
       </div>
+      <!-- <div class="after">评论的回复</div>
+      <div
+        class="replay"
+        v-for="(item, index) in replyData.results"
+        :key="index"
+      >
+        <div class="left-data">
+          <img src="../../assets/empty.jpg" alt="" />
+        </div>
+        <div class="right-data">
+          <div class="t1">
+            <div class="d-title">{{ item.aut_name }}</div>
+            <div class="d-like">
+              <van-icon name="like-o" />
+              <div class="d-num">{{ item.like_count }}</div>
+            </div>
+          </div>
+          <div class="t2">评论:{{ item.content }}</div>
+          <div class="t3">
+            <div class="t31">{{ item.pubdate | formatTime }}</div>
+            <div class="t32">{{ item.reply_count }}回复</div>
+          </div>
+        </div>
+      </div> -->
       <van-field
         v-model="inputVal"
         type="textarea"
@@ -211,7 +235,7 @@ export default {
   async created () {
     await this.refreshData() // 获取文章信息
     await this.onDiscuss(false, 'a') // 获取评论
-    await this.onDiscuss(false, 'c') // 获取评论回复
+    // await this.onDiscuss(false, 'c') // 获取评论回复
   },
   methods: {
     // 刷新文章信息
@@ -222,9 +246,13 @@ export default {
     },
     // 收藏文章和取消收藏文章
     async collectAct () {
+      this.$toast.loading({
+        duration: 0
+      })
       await collectArticle(this.acticleId, this.comList.is_collected)
       // console.log(res)
       this.refreshData()
+      this.$toast.success('修改成功')
     },
     // 取消关注用户 和 关注用户
     async onFollow (isTrue) {
@@ -281,26 +309,24 @@ export default {
     // 回复评论
     onRemake () {
       if (this.inputVal.length > 0) {
-        // this.$toast.loading({
-        //   duration: 0
-        // })
-        this.onDiscuss(false, 'c')
-        this.onDiscuss(true, 'c', this.huiFuData)
-        this.$toast.fail({
-          message: '接口坏了\nㄟ(;´_｀)ㄏ'
+        this.$toast.loading({
+          duration: 0
         })
+        this.onDiscuss(false, 'c') // 刷新回复的评论
+        this.onDiscuss(true, 'c', this.huiFuData)
+        console.log(this.huiFuData)
         this.showHuiFu = false
         this.inputVal = ''
-        // this.$toast.success('发布成功')
+        this.$toast.success('发布成功')
       }
     },
     huiFu (item) {
       this.showHuiFu = true
       this.huiFuData = item
-      // console.log(this.huiFuData)
+      // console.log(item)
+      this.onDiscuss(false, 'c')
     },
     async onDiscuss (isTrue, type, item) {
-      // console.log(item)
       if (isTrue) {
         if (type === 'a') {
           await replyComments(
@@ -311,31 +337,36 @@ export default {
             isTrue
           )
         } else {
-          // console.log(item)
           await replyComments(
             {
               target: item.aut_id,
               content: this.inputVal,
-              aid: item.aut_id
+              art_id: this.acticleId
             },
             isTrue
           )
         }
       } else {
-        const res = await replyComments(
-          {
-            type,
-            source: this.comList.art_id
-          },
-          isTrue
-        )
         if (type === 'a') {
+          const res = await replyComments(
+            {
+              type,
+              source: this.comList.art_id
+            },
+            isTrue
+          )
           this.remarkList = res.data
+          // console.log(res)
         } else {
+          const res = await replyComments(
+            {
+              type,
+              source: this.huiFuData.aut_id
+            },
+            isTrue
+          )
           this.replyData = res.data
         }
-        // console.log(res)
-        // console.log(this.replyData)
       }
     }
   },
@@ -490,6 +521,12 @@ export default {
     .comment {
       display: flex;
       justify-content: space-between;
+      border-top: 1px solid deeppink;
+      border-left: 1px solid deeppink;
+      border-right: 1px solid deeppink;
+      &:last-child {
+        border-bottom: 1px solid deeppink;
+      }
       .com-left {
         width: 40px;
         height: 40px;
@@ -527,7 +564,10 @@ export default {
           line-height: 22px;
           letter-spacing: 1px;
           padding-bottom: 7px;
+          padding-right: 6px;
           text-indent: 32px;
+          word-wrap: break-word;
+          word-break: break-all;
         }
         .com-item2 {
           display: flex;

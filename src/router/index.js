@@ -111,13 +111,13 @@ const router = new VueRouter({
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
-  console.log('from:', from)
-  console.log('to:', to)
+  // console.log('from:', from)
+  // console.log('to:', to)
   next()
 })
 // 全局后置守卫
 router.afterEach(async to => {
-  console.log('to:', to)
+  // console.log('to:', to)
   const tk = token.get()
   if (!store.state.isLogin && tk && tk.token) {
     store.dispatch('refreshUserInfo') // 刷新用户信息
