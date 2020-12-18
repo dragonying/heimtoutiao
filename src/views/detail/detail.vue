@@ -12,8 +12,9 @@
         <div class="title">{{ comList.title }}</div>
         <div class="user">
           <div class="user-head">
-            <img :src="comList.aut_photo" alt="" v-if="comList.aut_photo" />
-            <img src="../../assets/empty.jpg" alt="" v-else />
+            <!-- <img :src="comList.aut_photo" alt="" v-if="comList.aut_photo" />
+            <img src="../../assets/empty.jpg" alt="" v-else /> -->
+            <img src="../../assets/img5.jpg" alt="" />
           </div>
           <div class="user-name">
             <div class="user-name1">{{ comList.aut_name }}</div>
@@ -98,25 +99,25 @@
             :key="index"
           >
             <div class="com-left">
-              <img :src="item.aut_photo" v-if="item.aut_photo" alt="" />
-              <img src="../../assets/empty.jpg" v-else alt="" />
+              <!-- <img :src="item.aut_photo" v-if="item.aut_photo" alt="" />
+              <img src="../../assets/empty.jpg" v-else alt="" /> -->
+              <img src="../../assets/empty.jpg" alt="" />
             </div>
             <div class="com-right">
               <div class="com-item1">
                 <div class="com-name">{{ item.aut_name }}</div>
                 <div class="give-like">
                   <van-icon
-                    :name="item.is_liking ? 'good-job' : 'good-job-o'"
+                    name="good-job-o"
+                    :class="{ tored: item.like_count > 0 }"
                     @click="onLiking(item)"
-                  />{{ item.like_count }}
+                  />
+                  <div>{{ item.like_count }}</div>
                 </div>
               </div>
-              <div class="com-txt">{{ item.content }}</div>
+              <div class="com-txt">评论:{{ item.content }}</div>
               <div class="com-item2">
                 <div class="com-time">{{ item.pubdate | formatTime }}</div>
-                <div class="reply" @click="huiFu(item)">
-                  {{ item.reply_count }}回复
-                </div>
               </div>
             </div>
           </div>
@@ -150,65 +151,6 @@
         >发送</span
       >
     </van-popup>
-    <van-popup v-model="showHuiFu" position="bottom">
-      <div class="now">当前评论</div>
-      <div class="replay">
-        <div class="left-data">
-          <img src="../../assets/empty.jpg" alt="" />
-        </div>
-        <div class="right-data">
-          <div class="t1">
-            <div class="d-title">{{ huiFuData.aut_name }}</div>
-            <div class="d-like">
-              <van-icon name="like-o" />
-              <div class="d-num">{{ huiFuData.like_count }}</div>
-            </div>
-          </div>
-          <div class="t2">评论:{{ huiFuData.content }}</div>
-          <div class="t3">
-            <div class="t31">{{ huiFuData.pubdate | formatTime }}</div>
-            <div class="t32">{{ huiFuData.reply_count }}回复</div>
-          </div>
-        </div>
-      </div>
-      <!-- <div class="after">评论的回复</div>
-      <div
-        class="replay"
-        v-for="(item, index) in replyData.results"
-        :key="index"
-      >
-        <div class="left-data">
-          <img src="../../assets/empty.jpg" alt="" />
-        </div>
-        <div class="right-data">
-          <div class="t1">
-            <div class="d-title">{{ item.aut_name }}</div>
-            <div class="d-like">
-              <van-icon name="like-o" />
-              <div class="d-num">{{ item.like_count }}</div>
-            </div>
-          </div>
-          <div class="t2">评论:{{ item.content }}</div>
-          <div class="t3">
-            <div class="t31">{{ item.pubdate | formatTime }}</div>
-            <div class="t32">{{ item.reply_count }}回复</div>
-          </div>
-        </div>
-      </div> -->
-      <van-field
-        v-model="inputVal"
-        type="textarea"
-        placeholder="歪日Σσ(・Д・；)我我我什么都没做!!!"
-        rows="4"
-        @keydown.enter="onRemake"
-      ></van-field>
-      <span
-        class="send"
-        @click="onRemake"
-        :class="{ tored: inputValue.length > 0 }"
-        >发送</span
-      >
-    </van-popup>
     <div id="houhou"></div>
   </div>
 </template>
@@ -223,7 +165,6 @@ import {
   commentLike
 } from '@/api/news'
 import { followings } from '@/api/user'
-import { mapState } from 'vuex'
 export default {
   name: 'detail',
   components: {
@@ -237,8 +178,6 @@ export default {
       showInput: false, // 输入框是否显示
       inputValue: '', // 用户输入的字
       remarkList: [], // 用户评论
-      showHuiFu: false,
-      inputVal: '',
       huiFuData: '',
       replyData: '',
       num: '',
@@ -273,10 +212,6 @@ export default {
     // 滚动刷新评论
     onLoad () {
       this.onDiscuss(false, 'a')
-      // console.log(this.comList.last_id)
-      // if (last_id) {
-      //   this.finished = true
-      // }
     },
     // 取消关注用户 和 关注用户
     async onFollow (isTrue) {
@@ -306,11 +241,13 @@ export default {
     },
     // 对评论点赞
     async onLiking (item) {
-      // this.$toast.loading({
-      //   duration: 0
-      // })
+      this.$toast.loading({
+        duration: 0
+      })
       await commentLike(item.com_id, item.is_liking)
-      this.onDiscuss(false, 'a')
+      // this.onDiscuss(false, 'a')
+      item.like_count++
+      this.$toast.success('点赞成功')
     },
     // 评论回复
     onSend () {
@@ -324,27 +261,6 @@ export default {
         this.inputValue = ''
         this.$toast.success('发布成功')
       }
-    },
-    // 回复评论
-    onRemake () {
-      if (this.inputVal.length > 0) {
-        this.$toast.loading({
-          duration: 0
-        })
-        this.onDiscuss(false, 'c') // 刷新回复的评论
-        this.onDiscuss(true, 'c', this.huiFuData)
-        console.log(this.huiFuData)
-        this.huiFuData.reply_count++
-        this.showHuiFu = false
-        this.inputVal = ''
-        //  this.remarkList[]reply_count
-        this.$toast.success('发布成功')
-      }
-    },
-    huiFu (item) {
-      this.showHuiFu = true
-      this.huiFuData = item
-      // this.onDiscuss(false, 'c')
     },
     async onDiscuss (isTrue, type, item) {
       if (isTrue) {
@@ -383,8 +299,6 @@ export default {
             this.finished = true
           }
           this.remarkList = res.data.results
-          // console.log(this.remarkList)
-          // this.remarkList.reply_count++
           this.num = res.data.total_count
         } else {
           const res = await replyComments(
@@ -398,9 +312,6 @@ export default {
         }
       }
     }
-  },
-  computed: {
-    ...mapState(['userInfo'])
   }
 }
 </script>
@@ -569,7 +480,7 @@ export default {
     }
     .comment {
       display: flex;
-      padding: 4px;
+      padding: 6px;
       justify-content: space-between;
       border: 1px solid deeppink;
       border-radius: 8px;
@@ -581,6 +492,7 @@ export default {
         margin-right: 10px;
         img {
           width: 100%;
+          border-radius: 50%;
         }
       }
       .com-right {
@@ -594,11 +506,11 @@ export default {
             color: #446a9d;
           }
           .give-like {
+            display: flex;
+            color: #343434;
             .van-icon {
-              line-height: 20px;
               color: #343434;
             }
-            color: #343434;
           }
         }
         .com-txt {
@@ -608,7 +520,6 @@ export default {
           line-height: 22px;
           padding-bottom: 7px;
           padding-right: 6px;
-          text-indent: 32px;
           word-wrap: break-word;
           word-break: break-all;
         }
