@@ -4,11 +4,7 @@
       <span class="title">{{ title }}</span>
     </template>
     <template #default>
-      <van-image
-        v-if="type === 'img' && name"
-        class="img"
-        :src="baseUrl + name"
-      />
+      <van-image v-if="type === 'img' && name" class="img" :src="name" />
       <van-image
         class="img"
         v-else-if="type === 'img'"
@@ -23,9 +19,7 @@ export default {
   name: 'cell',
   props: ['title', 'name', 'type'],
   data () {
-    return {
-      baseUrl: process.env.VUE_APP_URL
-    }
+    return {}
   }
 }
 </script>
@@ -33,6 +27,10 @@ export default {
 .cell-item {
   width: 100%;
   padding: 15px;
+  /deep/ .van-image__img {
+    height: 100%;
+    width: 100%;
+  }
   .title {
     font-size: 14px;
     font-weight: 400;
@@ -49,6 +47,7 @@ export default {
     vertical-align: middle;
     overflow: hidden;
   }
+
   .van-cell__value {
     margin-right: 8px;
   }
