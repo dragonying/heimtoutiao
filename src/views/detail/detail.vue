@@ -7,7 +7,7 @@
       title="文章详情"
       id="top"
     ></navBar>
-    <div class="content">
+    <div class="content" ref="imgContainer">
       <div class="content-i" v-if="comList">
         <div class="title">{{ comList.title }}</div>
         <div class="user">
@@ -133,6 +133,8 @@
           :class="{ tored: comList.is_collected }"
           @click="collectAct"
         />
+        <van-icon name="share-o" @click="share" />
+
         <van-icon name="back-top" @click="goTop" />
       </div>
     </div>
@@ -152,6 +154,16 @@
       >
     </van-popup>
     <div id="houhou"></div>
+    <van-dialog
+      class="share-box"
+      v-model="showShare"
+      :title="`分享${comList.title}`"
+      show-cancel-button
+      @confirm="saveLocal"
+      confirm-button-text="保存相册"
+    >
+      <img class="shareImg" :src="sharePic" />
+    </van-dialog>
   </div>
 </template>
 
@@ -165,6 +177,7 @@ import {
   commentLike
 } from '@/api/news'
 import { followings } from '@/api/user'
+import html2canvas from 'html2canvas'
 export default {
   name: 'detail',
   components: {
@@ -172,6 +185,8 @@ export default {
   },
   data () {
     return {
+      showShare: false,
+      sharePic: 'https://img.yzcdn.cn/vant/apple-3.jpg',
       comList: '', // 文章详情
       acticleId: this.$route.params.artid, // 文章id
       bol: true, // 静默刷新
@@ -311,6 +326,31 @@ export default {
           this.replyData = res.data
         }
       }
+    },
+    // 分享
+    share () {
+      this.$showLoad('生成中....')
+
+      html2canvas(this.$refs.imgContainer, {
+        // 转换为图片
+        useCORS: true // 解决资源跨域问题
+      }).then(canvas => {
+        console.log(canvas, 'canvas')
+        const dataURL = canvas.toDataURL('image/png')
+        this.sharePic = dataURL
+        this.$toast.success('生成成功')
+
+        this.showShare = true
+      })
+    },
+    // 保存本地
+    saveLocal () {
+      // 保存到本地
+      const ADOM = document.createElement('a')
+      ADOM.href = this.sharePic
+      console.log(this.sharePic)
+      ADOM.download = new Date().getTime() + '.jpeg'
+      ADOM.click()
     }
   }
 }
@@ -318,6 +358,15 @@ export default {
 
 <style lang="less" scoped>
 .detail {
+  width: 100%;
+  .share-box {
+    padding: 10px;
+    text-align: center;
+    .shareImg {
+      width: 100px;
+      height: 200px;
+    }
+  }
   background: url('../../assets/timg.jpg') no-repeat;
   background-size: cover;
   font-size: 14px;
