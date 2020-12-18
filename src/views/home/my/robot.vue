@@ -160,8 +160,9 @@ export default {
     // 输入框消息
     async enter () {
       this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, this.text)
-      const res = await tuling(this.userInfo.id, this.text)
-      this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, res.data.data, true)
+      const userId = this.userInfo && this.userInfo.id ? this.userInfo.id : 111
+      const res = await tuling(userId, this.text)
+      this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, res.data, true)
       // 消息滚动底部
       this.$nextTick(() => {
         const msg = this.$refs.chatBox // 获取对象

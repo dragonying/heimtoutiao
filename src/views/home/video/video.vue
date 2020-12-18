@@ -1,13 +1,15 @@
 <template>
-  <div>我是视频页面</div>
+  <iframe src="https://m.bilibili.com/" frameborder="0" class="iframe"></iframe>
+  <!-- <iframe src="https://www.9984t.com/" frameborder="0" class="iframe"></iframe> -->
 </template>
 
 <script>
-export default {
-
-}
+export default {}
 </script>
 
-<style>
-
+<style lang="less" scoped>
+.iframe {
+  min-height: 100%;
+  width: 100%;
+}
 </style>

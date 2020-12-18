@@ -3,7 +3,7 @@
     <section v-if="isLogin" class="top">
       <div class="user">
         <van-image
-          :src="userInfo.photo"
+          :src="require('@/assets/logo.png')"
           class="u-left"
           @click="$router.push('/user/center')"
         />
@@ -23,8 +23,8 @@
           </div>
         </div>
       </div>
-      <ul class="count">
-        <li class="item" @click="$router.push('/user/userInfo')">
+      <ul class="stastic">
+        <li class="item" @click="$router.push(`/user/userInfo/${userInfo.id}`)">
           <h4>{{ userInfo.art_count }}</h4>
           <p>动态</p>
         </li>
@@ -38,16 +38,16 @@
         </li>
       </ul>
     </section>
-    <section v-else class="top">
-      <van-icon class="mobile" name="user-o" />
+    <section v-else class="top nologin">
+      <van-icon class="mobile" name="user-o" @click="$router.push('/')" />
     </section>
     <section class="tool">
       <ul class="tool-item">
-        <li class="item">
+        <li class="item" @click="$router.push('/user/history/collection')">
           <van-icon class="star" name="star-o" />
           <p>收&nbsp;藏</p>
         </li>
-        <li class="item">
+        <li class="item" @click="$router.push('/user/history/history')">
           <van-icon class="like" name="clock-o" />
           <p>历&nbsp;史</p>
         </li>
@@ -87,11 +87,7 @@ export default {
       isLogin: state => state.isLogin
     })
   },
-  created () {
-    if (!this.isLogin) {
-      this.$store.dispatch('refreshUserInfo')
-    }
-  }
+  created () {}
 }
 </script>
 <style lang="less" scoped>
@@ -104,11 +100,13 @@ export default {
   }
   .top {
     padding: 16px 0;
-    height: 155px;
     background: url(~@/assets/images/banner.png) no-repeat center;
     background-size: cover;
     color: #ffffff;
-    position: relative;
+    &.nologin {
+      position: relative;
+      height: 118px;
+    }
     .mobile {
       width: 61px;
       height: 61px;
@@ -128,53 +126,54 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-    .u-left {
-      width: 66px;
-      height: 66px;
-      border-radius: 50%;
-      border: 1px solid #fff;
-      margin-left: 20px;
-      overflow: hidden;
-    }
-    .u-middle {
-      font-size: 16px;
-      font-weight: 500;
-      letter-spacing: 1px;
-      flex: 1;
-      margin-left: 14px;
-    }
-    .applyAudit {
-      width: 58px;
-      height: 16px;
-      line-height: 16px;
-      background: #ffffff;
-      border-radius: 8px;
-      font-size: 10px;
-      font-weight: 700;
-      color: #3296fa;
-      letter-spacing: 1px;
-    }
-    .u-right {
-      width: 94px;
-      height: 40px;
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 20px 0 0 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      .van-icon {
-        font-size: 17px;
-        font-weight: 700;
+
+      .u-left {
+        width: 66px;
+        height: 66px;
+        border-radius: 50%;
+        border: 1px solid #fff;
+        margin-left: 20px;
+        overflow: hidden;
       }
-      .today-read {
-        font-size: 12px;
-        font-weight: 400;
-        margin-left: 8px;
+      .u-middle {
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 1px;
+        flex: 1;
+        margin-left: 14px;
+      }
+      .applyAudit {
+        width: 58px;
+        height: 16px;
+        line-height: 16px;
+        background: #ffffff;
+        border-radius: 8px;
+        font-size: 10px;
+        font-weight: 700;
+        color: #3296fa;
+        letter-spacing: 1px;
+      }
+      .u-right {
+        width: 94px;
+        height: 40px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 20px 0 0 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .van-icon {
+          font-size: 17px;
+          font-weight: 700;
+        }
+        .today-read {
+          font-size: 12px;
+          font-weight: 400;
+          margin-left: 8px;
+        }
       }
     }
 
-    .count {
+    .stastic {
       display: flex;
       justify-content: space-around;
       align-items: center;
