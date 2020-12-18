@@ -51,7 +51,11 @@
           <van-icon class="like" name="clock-o" />
           <p>历&nbsp;史</p>
         </li>
-        <li class="item" v-if="isLogin" @click="$router.push(`/user/userInfo/${userInfo.id}`)">
+        <li
+          class="item"
+          v-if="isLogin"
+          @click="$router.push(`/user/userInfo/${userInfo.id}`)"
+        >
           <van-icon class="flower" name="flower-o" />
           <p>作&nbsp;品</p>
         </li>
@@ -66,20 +70,33 @@
       <van-cell title="小智同学" center is-link to="/user/robot" />
       <van-cell title="系统设置" center is-link to="/user/setting" />
     </van-cell-group>
+    <van-button block @click="logout()">退出</van-button>
   </div>
 </template>
 
 <script>
 // import { userSelfInfo } from '@/api/user'
 import { mapState } from 'vuex'
-
+import { token } from '@/utils/storage'
 export default {
   name: 'my-page',
   data () {
     return {}
   },
   methods: {
-    // async userInfo () {}
+    logout () {
+      this.$dialog
+        .confirm({
+          title: '温馨提示',
+          message: '您确认退出吗？'
+        })
+        .then(() => {
+          token.del()
+          this.$store.commit('setAuthInfo', undefined)
+          this.$router.push('/')
+        })
+        .catch(() => {})
+    }
   },
   computed: {
     ...mapState({
@@ -94,6 +111,15 @@ export default {
 .my-page {
   min-height: 100%;
   background: #f5f7f9;
+  .van-button {
+    width: 347px;
+    height: 44px;
+    background: #3296fa;
+    border-radius: 10px;
+    margin: 13px auto;
+    font-size: 15px;
+    color: #ffffff;
+  }
   & > * {
     background-color: #fff;
     border-bottom: 4px solid #f5f7f9;

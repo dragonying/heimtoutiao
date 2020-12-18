@@ -1,6 +1,6 @@
 <template>
   <div class="start">
-    <img src="@/assets/logo.png" />
+    <img src="@/assets/start.png" />
     <h1 class="title">
       黑马头条
     </h1>
@@ -15,7 +15,8 @@ export default {
 <style lang="less" scoped>
 .start {
   min-height: 100%;
-  background: #000;
+  // background: radial-gradient(#408cfc 0%, #3296fa 100%);
+  background: #fff;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -23,6 +24,7 @@ export default {
   right: 0;
   z-index: 9999;
   text-align: center;
+  color: #408cfc;
   img {
     height: 230px;
     width: 230px;
@@ -32,11 +34,10 @@ export default {
   .title {
     font-size: 25px;
     font-weight: 500;
-    color: #fefeff;
   }
   .intro {
     font-size: 22px;
-    color: #fefeff;
+    // color: #fefeff;
   }
 }
 </style>
