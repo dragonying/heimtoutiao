@@ -358,6 +358,9 @@ export default {
 
   .content {
     padding: 0 19px 52px 12px;
+    ::v-deep img {
+      width: 100%;
+    }
     .title {
       text-align: center;
       padding-top: 24px;
