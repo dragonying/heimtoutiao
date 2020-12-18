@@ -51,7 +51,7 @@
           <van-icon class="like" name="clock-o" />
           <p>历&nbsp;史</p>
         </li>
-        <li class="item" v-if="isLogin">
+        <li class="item" v-if="isLogin" @click="$router.push(`/user/userInfo/${userInfo.id}`)">
           <van-icon class="flower" name="flower-o" />
           <p>作&nbsp;品</p>
         </li>
