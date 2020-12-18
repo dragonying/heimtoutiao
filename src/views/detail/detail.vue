@@ -5,6 +5,7 @@
       name="ellipsis"
       to="/searchResult/123"
       title="文章详情"
+      id="top"
     ></navBar>
     <div class="content">
       <div class="content-i" v-if="comList">
@@ -77,54 +78,61 @@
       </div>
       <div class="adv">
         <div class="adv-img">
-          <img src="../../assets/guanggao.png" alt="" />
+          <img src="../../assets/happynewyear.png" alt="" />
         </div>
         <div class="txt-item1">
-          前端与移动开发-课程升级V6.0 高薪技术全覆盖
+          「版权所有未经许可请勿使用」
         </div>
-        <div class="txt-item1">学前端 选择-传智播客</div>
+        <div class="txt-item2">FUCK ALL</div>
       </div>
       <template v-if="remarkList">
-        <div
-          class="comment"
-          v-for="(item, index) in remarkList.results"
-          :key="index"
-        >
-          <div class="com-left">
-            <img :src="item.aut_photo" v-if="item.aut_photo" alt="" />
-            <img src="../../assets/empty.jpg" v-else alt="" />
-          </div>
-          <div class="com-right">
-            <div class="com-item1">
-              <div class="com-name">{{ item.aut_name }}</div>
-              <div class="give-like">
-                <van-icon
-                  :name="item.is_liking ? 'good-job' : 'good-job-o'"
-                  @click="onLiking(item)"
-                />{{ item.like_count }}
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="木得了(︶.̮︶✽)"
+          offset="100"
+          @load="onLoad"
+          ><div
+            class="comment"
+            v-for="(item, index) in remarkList"
+            :key="index"
+          >
+            <div class="com-left">
+              <img :src="item.aut_photo" v-if="item.aut_photo" alt="" />
+              <img src="../../assets/empty.jpg" v-else alt="" />
+            </div>
+            <div class="com-right">
+              <div class="com-item1">
+                <div class="com-name">{{ item.aut_name }}</div>
+                <div class="give-like">
+                  <van-icon
+                    :name="item.is_liking ? 'good-job' : 'good-job-o'"
+                    @click="onLiking(item)"
+                  />{{ item.like_count }}
+                </div>
+              </div>
+              <div class="com-txt">{{ item.content }}</div>
+              <div class="com-item2">
+                <div class="com-time">{{ item.pubdate | formatTime }}</div>
+                <div class="reply" @click="huiFu(item)">
+                  {{ item.reply_count }}回复
+                </div>
               </div>
             </div>
-            <div class="com-txt">{{ item.content }}</div>
-            <div class="com-item2">
-              <div class="com-time">{{ item.pubdate | formatTime }}</div>
-              <div class="reply" @click="huiFu(item)">
-                {{ item.reply_count }}回复
-              </div>
-            </div>
           </div>
-        </div>
+        </van-list>
       </template>
     </div>
     <div class="footer">
       <div class="foot">
         <div class="search" @click="showInput = true">写评论</div>
-        <van-icon name="chat-o" :badge="remarkList.total_count || 0" />
+        <van-icon name="chat-o" :badge="num || 0" />
         <van-icon
           :name="comList.is_collected ? 'like' : 'like-o'"
           :class="{ tored: comList.is_collected }"
           @click="collectAct"
         />
-        <van-icon name="share-o" />
+        <van-icon name="back-top" @click="goTop" />
       </div>
     </div>
     <van-popup v-model="showInput" position="bottom">
@@ -133,6 +141,7 @@
         type="textarea"
         placeholder="歪日Σσ(・Д・；)我我我什么都没做!!!"
         rows="4"
+        @keydown.enter="onSend"
       ></van-field>
       <span
         class="send"
@@ -143,7 +152,7 @@
     </van-popup>
     <van-popup v-model="showHuiFu" position="bottom">
       <div class="now">当前评论</div>
-      <div class="replay" v-if="huiFuData">
+      <div class="replay">
         <div class="left-data">
           <img src="../../assets/empty.jpg" alt="" />
         </div>
@@ -191,6 +200,7 @@
         type="textarea"
         placeholder="歪日Σσ(・Д・；)我我我什么都没做!!!"
         rows="4"
+        @keydown.enter="onRemake"
       ></van-field>
       <span
         class="send"
@@ -199,6 +209,7 @@
         >发送</span
       >
     </van-popup>
+    <div id="houhou"></div>
   </div>
 </template>
 
@@ -225,11 +236,15 @@ export default {
       bol: true, // 静默刷新
       showInput: false, // 输入框是否显示
       inputValue: '', // 用户输入的字
-      remarkList: '', // 用户评论
+      remarkList: [], // 用户评论
       showHuiFu: false,
       inputVal: '',
       huiFuData: '',
-      replyData: ''
+      replyData: '',
+      num: '',
+      loading: false,
+      finished: false,
+      currindex: 10
     }
   },
   async created () {
@@ -242,7 +257,9 @@ export default {
     async refreshData () {
       const res = await userArticles(this.acticleId)
       this.comList = res.data
-      // console.log(this.comList)
+    },
+    goTop () {
+      document.querySelector('#top').scrollIntoView(true)
     },
     // 收藏文章和取消收藏文章
     async collectAct () {
@@ -250,9 +267,16 @@ export default {
         duration: 0
       })
       await collectArticle(this.acticleId, this.comList.is_collected)
-      // console.log(res)
       this.refreshData()
       this.$toast.success('修改成功')
+    },
+    // 滚动刷新评论
+    onLoad () {
+      this.onDiscuss(false, 'a')
+      // console.log(this.comList.last_id)
+      // if (last_id) {
+      //   this.finished = true
+      // }
     },
     // 取消关注用户 和 关注用户
     async onFollow (isTrue) {
@@ -277,21 +301,16 @@ export default {
         duration: 0
       })
       await disLike(this.comList.art_id, isTrue)
-      // console.log(res)
       this.refreshData()
       this.$toast.success('修改成功')
     },
     // 对评论点赞
     async onLiking (item) {
-      console.log(item)
       // this.$toast.loading({
       //   duration: 0
       // })
       await commentLike(item.com_id, item.is_liking)
-      // console.log(res)
       this.onDiscuss(false, 'a')
-      // this.$toast.success('修改成功')
-      console.log(item.is_liking)
     },
     // 评论回复
     onSend () {
@@ -315,16 +334,17 @@ export default {
         this.onDiscuss(false, 'c') // 刷新回复的评论
         this.onDiscuss(true, 'c', this.huiFuData)
         console.log(this.huiFuData)
+        this.huiFuData.reply_count++
         this.showHuiFu = false
         this.inputVal = ''
+        //  this.remarkList[]reply_count
         this.$toast.success('发布成功')
       }
     },
     huiFu (item) {
       this.showHuiFu = true
       this.huiFuData = item
-      // console.log(item)
-      this.onDiscuss(false, 'c')
+      // this.onDiscuss(false, 'c')
     },
     async onDiscuss (isTrue, type, item) {
       if (isTrue) {
@@ -351,12 +371,21 @@ export default {
           const res = await replyComments(
             {
               type,
-              source: this.comList.art_id
+              source: this.$route.params.artid,
+              limit: this.currindex,
+              offset: this.comList.com_id
             },
             isTrue
           )
-          this.remarkList = res.data
-          // console.log(res)
+          this.currindex = this.currindex + 2
+          this.loading = false
+          if (res.data.total_count <= this.currindex - 1) {
+            this.finished = true
+          }
+          this.remarkList = res.data.results
+          // console.log(this.remarkList)
+          // this.remarkList.reply_count++
+          this.num = res.data.total_count
         } else {
           const res = await replyComments(
             {
@@ -379,26 +408,52 @@ export default {
 <style lang="less" scoped>
 .detail {
   background: url('../../assets/timg.jpg') no-repeat;
-  background-color: rgba(0, 0, 0, 0.1);
   background-size: cover;
+  font-size: 14px;
   font-family: YouYuan, Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
   ::v-deep .van-icon {
     color: #fff;
     font-size: 22px;
   }
+  #houhou {
+    position: fixed;
+    bottom: 50px;
+    right: 10px;
+    width: 58px;
+    height: 50px;
+    background: url('../../assets/8f34658.svg') no-repeat;
+    background-position: 50%;
+    animation: swing-data-v-22f7755e 0.5s cubic-bezier(0.7, 0.01, 0.35, 1)
+      infinite alternate;
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.7, 0.01, 0.35, 1);
+    animation-delay: 0s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-fill-mode: none;
+    animation-play-state: running;
+    animation-name: swing-data-v-22f7755e;
+  }
+  @keyframes swing-data-v-22f7755e {
+    0% {
+      -webkit-transform: rotate(-5deg);
+      transform: rotate(-5deg);
+    }
+    100% {
+      -webkit-transform: rotate(5deg);
+      transform: rotate(5deg);
+    }
+  }
+
   .content {
-    padding-left: 12px;
-    padding-right: 19px;
-    padding-bottom: 52px;
+    padding: 0 19px 52px 12px;
     .title {
       text-align: center;
       padding-top: 24px;
       font-size: 20px;
-      font-family: Microsoft YaHei Bold, Microsoft YaHei Bold-Bold;
       font-weight: 700;
       color: #3a3a3a;
       line-height: 32px;
-      letter-spacing: 1px;
     }
     .user {
       padding-top: 25px;
@@ -414,18 +469,15 @@ export default {
         }
       }
       .user-name {
-        font-size: 14px;
         flex: 1;
         margin-left: 4px;
         .user-name1 {
           color: #313131;
           font-weight: 400;
-          text-align: left;
         }
         .user-time {
           color: #bebebe;
           font-size: 12px;
-          text-align: left;
         }
       }
       .user-right {
@@ -443,25 +495,18 @@ export default {
       padding: 20px 6px 4px;
       overflow: hidden;
       text-overflow: ellipsis;
-      // white-space: nowrap;
       font-size: 12px;
-      font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
       font-weight: 400;
-      text-align: left;
       color: #222222;
-      letter-spacing: 1px;
       text-indent: 36px;
     }
     .like {
       padding-top: 25px;
       .like-item1 {
         font-size: 15px;
-        font-family: Microsoft YaHei Bold, Microsoft YaHei Bold-Bold;
         font-weight: 700;
-        text-align: left;
         color: #333333;
         line-height: 32px;
-        letter-spacing: 1px;
         padding-bottom: 10px;
       }
       .like-item2 {
@@ -472,12 +517,9 @@ export default {
         li {
           width: 50%;
           font-size: 15px;
-          font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
           font-weight: 400;
-          text-align: left;
           color: #666666;
           line-height: 32px;
-          letter-spacing: 1px;
         }
       }
     }
@@ -501,32 +543,38 @@ export default {
       margin-top: 25px;
       margin-bottom: 36px;
       border: 1px solid #e8e8e8;
-      padding: 20px 20px 20px 36px;
+      padding-bottom: 10px;
+      border-radius: 8px;
       .adv-img {
-        height: 182px;
         width: 100%;
         img {
           width: 100%;
+          border-radius: 8px;
         }
       }
       .txt-item1 {
+        text-align: center;
         font-size: 12px;
-        font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
         font-weight: 400;
-        text-align: left;
         color: #222222;
-        letter-spacing: 1px;
+      }
+      .txt-item2 {
+        text-align: center;
+        font-size: 20px;
+        font-family: STHupo YouYuan, Microsoft YaHei Regular,
+          Microsoft YaHei Regular-Regular;
+        font-weight: 700;
+        color: deeppink;
       }
     }
     .comment {
       display: flex;
+      padding: 4px;
       justify-content: space-between;
-      border-top: 1px solid deeppink;
-      border-left: 1px solid deeppink;
-      border-right: 1px solid deeppink;
-      &:last-child {
-        border-bottom: 1px solid deeppink;
-      }
+      border: 1px solid deeppink;
+      border-radius: 8px;
+      margin-bottom: 6px;
+
       .com-left {
         width: 40px;
         height: 40px;
@@ -544,25 +592,20 @@ export default {
           padding-bottom: 5px;
           .com-name {
             color: #446a9d;
-            font-size: 14px;
           }
           .give-like {
             .van-icon {
               line-height: 20px;
               color: #343434;
-              font-size: 14px;
             }
             color: #343434;
-            font-size: 14px;
           }
         }
         .com-txt {
           font-size: 16px;
           font-weight: 400;
-          text-align: left;
           color: #1c1c1c;
           line-height: 22px;
-          letter-spacing: 1px;
           padding-bottom: 7px;
           padding-right: 6px;
           text-indent: 32px;
@@ -620,6 +663,9 @@ export default {
       .van-info {
         top: 10px;
       }
+      .van-icon-back-top {
+        color: deeppink;
+      }
     }
   }
   .tored {
@@ -638,12 +684,9 @@ export default {
       border-radius: 6px;
       background-color: #f7f4f5;
       padding: 8px;
-      font-size: 14px;
     }
     .send {
       float: right;
-      font-family: YouYuan, Microsoft YaHei Regular,
-        Microsoft YaHei Regular-Regular;
       font-weight: 400;
       font-size: 16px;
       color: #b4b4bd;
@@ -677,14 +720,12 @@ export default {
           justify-content: space-between;
           color: #ccc;
           .d-title {
-            font-size: 14px;
             margin-top: 10px;
           }
           .d-like {
             display: flex;
             margin-top: 10px;
             .van-icon {
-              font-size: 14px;
               color: #333;
             }
             .d-num {
@@ -695,7 +736,6 @@ export default {
           }
         }
         .t2 {
-          font-size: 14px;
           color: deeppink;
           margin-bottom: 10px;
         }
@@ -708,7 +748,6 @@ export default {
             margin-right: 10px;
           }
           .t32 {
-            font-size: 14px;
             padding: 2px 10px;
             border-radius: 20px;
             background-color: #ccc;
