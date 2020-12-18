@@ -112,7 +112,7 @@ export default {
   name: 'feed-back',
   data () {
     return {
-      coverImgUrl: require('@/assets/images/3.jpg'), // 背景图
+      coverImgUrl: require('@/assets/images/bg.jpg'), // 背景图
       msg_type: MSG_TYPE,
       showTool: false,
       selectedUserId: 1, // 选中的用户
