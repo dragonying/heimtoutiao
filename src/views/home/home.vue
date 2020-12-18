@@ -2,7 +2,7 @@
   <div class="home">
     <!-- 设置路由出口 -->
     <router-view></router-view>
-    <van-tabbar v-model="active" placeholder  route>
+    <van-tabbar v-model="active" placeholder route>
       <van-tabbar-item name="index" icon="home-o" replace to="/home/index"
         >首页</van-tabbar-item
       >
@@ -24,7 +24,7 @@ export default {
   name: 'home',
   data () {
     return {
-      active:"my"
+      active: 'my'
     }
   }
 }

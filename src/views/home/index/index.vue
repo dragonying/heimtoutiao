@@ -10,7 +10,12 @@
       />
     </div>
     <div class="labelBox">
-      <van-tabs v-model="active" color="#2F97FA" line-width="20px" title-active-color="#000000">
+      <van-tabs
+        v-model="active"
+        color="#2F97FA"
+        line-width="20px"
+        title-active-color="#000000"
+      >
         <van-tab
           v-for="(value, index) in info"
           :key="index"
@@ -68,122 +73,124 @@
           <div class="compile" v-if="!compile" @click="add">完成</div>
         </div>
         <van-tag
-          v-for="(value,index) in reserve"
+          v-for="(value, index) in reserve"
           :key="index"
           color="#F4F5F6"
           size="large"
           type="primary"
           class="showRecommend"
           @click="addChannel(value.id)"
-        >{{ value.name }}</van-tag>
+          >{{ value.name }}</van-tag
+        >
       </div>
       <div class="windows">
         <div class="topWindows">
           <div class="myChannel">频道推荐</div>
         </div>
         <van-tag
-          v-for="(value,index) in info"
+          v-for="(value, index) in info"
           :key="index"
           color="#F4F5F6"
           size="large"
           type="primary"
           class="showRecommend"
-        >+ {{value.name}}</van-tag>
+          >+ {{ value.name }}</van-tag
+        >
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { userChannels, allChannels } from "@/api/user"; // 导入获取用户频道列表
-import { appArticles } from "@/api/news"; // 导入频道新闻推荐_v1.1
-import { deepClone } from "@/utils/tool";
+import { userChannels, allChannels } from '@/api/user' // 导入获取用户频道列表
+import { appArticles } from '@/api/news' // 导入频道新闻推荐_v1.1
+import { deepClone } from '@/utils/tool'
 // import loginVue from '../../login/login.vue'
 export default {
-  data() {
+  data () {
     return {
       show: false,
-      value: "", // 输入框
-      active: "1",
+      value: '', // 输入框
+      active: '1',
       info: [], // 储存当前全部用列表
       list: [],
       loading: false,
       finished: false,
       pagrTop: true,
       compile: true,
-      reserve: [], //克隆的数组
-      myChannel: [], //储存我的频道
-    };
+      reserve: [], // 克隆的数组
+      myChannel: [] // 储存我的频道
+    }
   },
-  async created() {
+  async created () {
     // 获取全部用户频道
-    const res = await userChannels();
-    this.info = res.data.channels;
+    const res = await userChannels()
+    this.info = res.data.channels
     // console.log(this.info);
     // 调用深克隆方法
-    this.reserve = deepClone(this.info);
-    console.log(this.reserve);
+    this.reserve = deepClone(this.info)
+    console.log(this.reserve)
   },
   // 事件
   methods: {
-    addChannel(id) {
+    addChannel (id) {
       this.reserve.forEach((value, index) => {
         if (value.id === id) {
-          this.myChannel.push(this.reserve[index]);
-          this.reserve.splice(index, 1);
+          this.myChannel.push(this.reserve[index])
+          this.reserve.splice(index, 1)
         }
-      });
+      })
     },
-    async add() {
-      const res = await allChannels(); //token 问题
-      console.log(res);
+    async add () {
+      const res = await allChannels() // token 问题
+      console.log(res)
       this.reserve.forEach((value, index) => {
-        if (value.id === value.id) {
-          this.reserve.splice(index, 1);
-        }
-      });
-      this.compile = !this.compile;
+        // if (value.id === value.id) {
+        this.reserve.splice(index, 1)
+        // }
+      })
+      this.compile = !this.compile
     },
 
     // 用户频道点击高亮
-    tabCheck(name, title) {
+    tabCheck (name, title) {
       // 传入当前点击的频道名和name的绑定
-      this.active = name;
+      this.active = name
     },
     // 弹窗点击事件
-    showPopup() {
-      this.show = true;
+    showPopup () {
+      this.show = true
     },
     // 弹窗浏览列表清除事件
-    close() {
-      this.showRecommend = false;
+    close () {
+      this.showRecommend = false
     },
-    async onLoad() {
-      this.loading = false;
-      this.finished = false;
-      this.list = [];
+    async onLoad () {
+      this.loading = false
+      this.finished = false
+      this.list = []
       const res = await appArticles({
         channelId: this.active,
-        withTop: 0,
-      });
+        withTop: 0
+      })
       // console.log(res);
-      this.list = res.data.results;
-      this.loading = false;
+      this.list = res.data.results
+      this.loading = false
       if (res.data.results.length <= 1) {
-        this.finished = true;
+        this.finished = true
       }
-      this.pagrTop = false;
+      this.pagrTop = false
       this.$nextTick(() => {
-        this.pagrTop = true;
-      });
-    },
+        this.pagrTop = true
+      })
+    }
   },
   watch: {
     active: function () {
-      this.onLoad();
-    },
-  },
-};
+      this.onLoad()
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
