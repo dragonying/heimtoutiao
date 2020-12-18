@@ -32,6 +32,7 @@
       :finished="finished"
       finished-text="没有更多了ღ( ´･ᴗ･` )ღ"
       @load="onLoad"
+      loading-text
     >
       <div class="exhibition" v-for="(item, index) in list" :key="index">
         <span>{{ item.title }}</span>
@@ -64,7 +65,7 @@
         </div>
       </div>
     </van-list>
-    <van-popup v-model="show" position="bottom">
+    <van-popup v-model="show" position="bottom" :style="{ height: '75%' }">
       <div class="windows">
         <div class="topWindows">
           <div class="myChannel">我的频道</div>
@@ -72,13 +73,13 @@
           <div class="compile" v-if="!compile" @click="add">完成</div>
         </div>
         <van-tag
-          v-for="(value, index) in info"
+          v-for="(value, index) in reserve"
           :key="index"
           color="#F4F5F6"
           size="large"
           type="primary"
-          @close="close"
           class="showRecommend"
+          @click="addChannel(value.id)"
           >{{ value.name }}</van-tag
         >
       </div>
@@ -87,13 +88,13 @@
           <div class="myChannel">频道推荐</div>
         </div>
         <van-tag
-          v-if="showRecommend"
+          v-for="(value, index) in info"
+          :key="index"
           color="#F4F5F6"
           size="large"
           type="primary"
-          @close="close"
           class="showRecommend"
-          >+ 理论</van-tag
+          >+ {{ value.name }}</van-tag
         >
       </div>
     </van-popup>
@@ -101,22 +102,24 @@
 </template>
 
 <script>
-import { userChannels } from '@/api/user' // 导入获取用户频道列表
+import { userChannels, allChannels } from '@/api/user' // 导入获取用户频道列表
 import { appArticles } from '@/api/news' // 导入频道新闻推荐_v1.1
+import { deepClone } from '@/utils/tool'
 // import loginVue from '../../login/login.vue'
 export default {
   data () {
     return {
       show: false,
       value: '', // 输入框
-      showRecommend: true, // 推荐栏标签
-      active: '0',
+      active: '1',
       info: [], // 储存当前全部用列表
       list: [],
       loading: false,
       finished: false,
       pagrTop: true,
-      compile: true
+      compile: true,
+      reserve: [], // 克隆的数组
+      myChannel: [] // 储存我的频道
     }
   },
   async created () {
@@ -124,10 +127,28 @@ export default {
     const res = await userChannels()
     this.info = res.data.channels
     // console.log(this.info);
+    // 调用深克隆方法
+    this.reserve = deepClone(this.info)
+    console.log(this.reserve)
   },
   // 事件
   methods: {
+    addChannel (id) {
+      this.reserve.forEach((value, index) => {
+        if (value.id === id) {
+          this.myChannel.push(this.reserve[index])
+          this.reserve.splice(index, 1)
+        }
+      })
+    },
     async add () {
+      const res = await allChannels() // token 问题
+      console.log(res)
+      this.reserve.forEach((value, index) => {
+        // if (value.id === value.id) {
+        this.reserve.splice(index, 1)
+        // }
+      })
       this.compile = !this.compile
     },
 
@@ -155,7 +176,7 @@ export default {
       // console.log(res);
       this.list = res.data.results
       this.loading = false
-      if (this.list.length >= 10) {
+      if (res.data.results.length <= 1) {
         this.finished = true
       }
       this.pagrTop = false
