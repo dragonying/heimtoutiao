@@ -120,6 +120,13 @@ export default {
     ...mapState(['userInfo'])
   },
   methods: {
+    // 弹窗显示
+    loadingShow () {
+      this.$toast.loading({
+        forbidClick: true,
+        duration: 0
+      })
+    },
     // 格式化选项
     formatter (type, val) {
       if (type === 'year') {
@@ -170,6 +177,7 @@ export default {
     },
     // 保存
     async save () {
+      this.$showLoad('保存中....')
       if (this.avatar) {
         await photo(this.avatar)
       }
@@ -180,6 +188,7 @@ export default {
         intro: this.tempUserInfo.intro
       })
       this.$store.dispatch('refreshUserInfo')
+      this.$toast.success('保存成功')
     }
   },
   created () {
