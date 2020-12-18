@@ -73,7 +73,7 @@ export const collections = data => {
   return request({
     url: '/app/v1_0/article/collections',
     method: 'GET',
-    data: data
+    params: data
   })
 }
 
@@ -82,6 +82,6 @@ export const history = data => {
   return request({
     url: '/app/v1_0/user/histories',
     method: 'GET',
-    data: data
+    params: data
   })
 }

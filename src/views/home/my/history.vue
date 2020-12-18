@@ -156,7 +156,7 @@ export default {
     // 收藏
     async collectionOnLoad () {
       this.collectionQuery.page++
-      const res = await collections(this.careQuery)
+      const res = await collections(this.collectionQuery)
       this.collectionList.push(...res.data.results)
       //   // 加载状态结束
       this.collectionloading = false
