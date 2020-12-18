@@ -1,13 +1,16 @@
 <template>
   <div class="search">
-    <van-search
-      v-model.trim="value"
-      show-action
-      placeholder="请输入搜索关键词"
-      @search="onSearch"
-      @input="suggest"
-    >
-    </van-search>
+    <van-sticky>
+      <van-search
+        v-model.trim="value"
+        show-action
+        placeholder="请输入搜索关键词"
+        @search="onSearch"
+        @input="suggest"
+      >
+      </van-search>
+    </van-sticky>
+
     <section v-if="value.length" class="suggestion">
       <van-cell center>
         <span slot="title" class="title black">你是否要搜索？</span>

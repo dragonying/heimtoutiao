@@ -34,7 +34,8 @@ export const channels = (target, isDelete = false) => {
 export const freshAuthorizations = () => {
   return request({
     url: '/app/v1_0/authorizations',
-    method: 'PUT'
+    method: 'PUT',
+    useFreshToken: true
   })
 }
 

@@ -66,7 +66,7 @@ export default {
       font-size: 14px;
       font-weight: 400;
       text-align: right;
-      color: #181a39;
+      color: #fff;
     }
   }
 }

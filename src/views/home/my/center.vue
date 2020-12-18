@@ -1,6 +1,6 @@
 <template>
   <div class="user-center">
-    <navBar title="个人信息" to="/home/my"></navBar>
+    <navBar title="个人信息" to="/home/my" right="保存" @onSave="save"></navBar>
     <div v-if="tempUserInfo">
       <van-cell-group>
         <cell
@@ -53,7 +53,7 @@
       </van-cell-group>
     </van-dialog>
     <van-dialog v-model="preveiwImg" :showConfirmButton="false">
-      <van-image :src="tempUserInfo.photo" @click="confirmSave" />
+      <van-image class="avatar" :src="avatar" @click="confirmSave" />
     </van-dialog>
 
     <van-popup
@@ -73,12 +73,13 @@
 
     <van-popup v-model="showBrithday" position="bottom">
       <van-datetime-picker
-        v-model="tempUserInfo.birthday"
+        v-model="birthday"
         type="date"
         title="选择年月日"
         :min-date="minDate"
         :max-date="maxDate"
         @confirm="birthdayConfirm"
+        :formatter="formatter"
       />
     </van-popup>
   </div>
@@ -88,6 +89,7 @@ import areaData from '@/assets/area'
 import { mapState } from 'vuex'
 import { photo, profile } from '@/api/user'
 import { deepClone } from '@/utils/tool'
+
 export default {
   name: 'user-center',
   components: {
@@ -108,6 +110,8 @@ export default {
       // 生日年份
       minDate: new Date(1977, 0, 1),
       maxDate: new Date(2099, 10, 1),
+      birthday: new Date(),
+      avatar: null,
       tempUserInfo: {} // 用户临时信息
     }
   },
@@ -116,20 +120,33 @@ export default {
     ...mapState(['userInfo'])
   },
   methods: {
+    // 弹窗显示
+    loadingShow () {
+      this.$toast.loading({
+        forbidClick: true,
+        duration: 0
+      })
+    },
+    // 格式化选项
+    formatter (type, val) {
+      if (type === 'year') {
+        return `${val}年`
+      } else if (type === 'month') {
+        return `${val}月`
+      } else {
+        return `${val}日`
+      }
+    },
     loadImg (v) {
       this.showUploadTip = false
-      this.tempUserInfo.photo = v
+      this.avatar = v
       this.preveiwImg = true
     },
     async genderConfirm (v, k) {
-      await profile({
-        gender: k
-      })
-      this.$store.dispatch('refreshUserInfo')
+      this.tempUserInfo.gender = k
       this.genderShow = false
     },
     genderCancel (v, k) {
-      // console.log(`cancel:${k} ${v}`)
       this.genderShow = false
     },
     confirmSave () {
@@ -139,11 +156,10 @@ export default {
           message: '是否设置为用户头像'
         })
         .then(async () => {
-          await photo(this.tempUserInfo)
-          this.$store.dispatch('refreshUserInfo')
+          this.tempUserInfo.photo = this.avatar
         })
         .catch(() => {
-          this.tempUserInfo.photo = undefined
+          this.avatar = null
         })
     },
     async nicknameInputClose () {
@@ -154,19 +170,32 @@ export default {
         this.$store.dispatch('refreshUserInfo')
       }
     },
+    // 生日
     async birthdayConfirm (value) {
       this.tempUserInfo.birthday = this.$options.filters.formatTime(value)
+      this.showBrithday = false
+    },
+    // 保存
+    async save () {
+      this.$showLoad('保存中....')
+      if (this.avatar) {
+        await photo(this.avatar)
+      }
       await profile({
-        birthday: this.tempUserInfo.birthday
+        name: this.tempUserInfo.name,
+        gender: this.tempUserInfo.gender,
+        birthday: this.tempUserInfo.birthday,
+        intro: this.tempUserInfo.intro
       })
       this.$store.dispatch('refreshUserInfo')
-
-      this.showBrithday = false
+      this.$toast.success('保存成功')
     }
   },
   created () {
     setTimeout(() => {
       this.tempUserInfo = deepClone(this.userInfo) || {}
+      this.birthday = this.tempUserInfo.birthday
+      this.avatar = this.tempUserInfo.photo
     }, 2000)
   }
 }
@@ -183,11 +212,10 @@ export default {
       text-align: center;
     }
   }
-  .van-image {
+  .avatar {
     height: 100%;
     width: 100%;
     padding: 20px;
-    background-color: gray;
   }
 }
 </style>

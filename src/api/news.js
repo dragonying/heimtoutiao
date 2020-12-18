@@ -67,3 +67,21 @@ export const commentLike = (target, isDelete = false) => {
   isDelete ? (option.url += `/${target}`) : (option.data = { target })
   return request(option)
 }
+
+// 获取用户收藏列表
+export const collections = data => {
+  return request({
+    url: '/app/v1_0/article/collections',
+    method: 'GET',
+    data: data
+  })
+}
+
+// 获取用户阅读历史
+export const history = data => {
+  return request({
+    url: '/app/v1_0/user/histories',
+    method: 'GET',
+    data: data
+  })
+}

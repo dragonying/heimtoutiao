@@ -6,7 +6,11 @@ export default {
     return window.localStorage.setItem(key, JSON.stringify(val))
   },
   getCache: function (key) {
-    return JSON.parse(window.localStorage.getItem(key))
+    try {
+      return JSON.parse(window.localStorage.getItem(key))
+    } catch {
+      return {}
+    }
   },
   delCache: function (key) {
     return window.localStorage.removeItem(key)

@@ -24,7 +24,7 @@
         </div>
       </div>
       <ul class="stastic">
-        <li class="item" @click="$router.push('/user/userInfo')">
+        <li class="item" @click="$router.push(`/user/userInfo/${userInfo.id}`)">
           <h4>{{ userInfo.art_count }}</h4>
           <p>动态</p>
         </li>
@@ -39,19 +39,23 @@
       </ul>
     </section>
     <section v-else class="top nologin">
-      <van-icon class="mobile" name="user-o" />
+      <van-icon class="mobile" name="user-o" @click="$router.push('/')" />
     </section>
     <section class="tool">
       <ul class="tool-item">
-        <li class="item">
+        <li class="item" @click="$router.push('/user/history/collection')">
           <van-icon class="star" name="star-o" />
           <p>收&nbsp;藏</p>
         </li>
-        <li class="item">
+        <li class="item" @click="$router.push('/user/history/history')">
           <van-icon class="like" name="clock-o" />
           <p>历&nbsp;史</p>
         </li>
-        <li class="item" v-if="isLogin">
+        <li
+          class="item"
+          v-if="isLogin"
+          @click="$router.push(`/user/userInfo/${userInfo.id}`)"
+        >
           <van-icon class="flower" name="flower-o" />
           <p>作&nbsp;品</p>
         </li>
@@ -66,20 +70,33 @@
       <van-cell title="小智同学" center is-link to="/user/robot" />
       <van-cell title="系统设置" center is-link to="/user/setting" />
     </van-cell-group>
+    <van-button block @click="logout()">退出</van-button>
   </div>
 </template>
 
 <script>
 // import { userSelfInfo } from '@/api/user'
 import { mapState } from 'vuex'
-
+import { token } from '@/utils/storage'
 export default {
   name: 'my-page',
   data () {
     return {}
   },
   methods: {
-    // async userInfo () {}
+    logout () {
+      this.$dialog
+        .confirm({
+          title: '温馨提示',
+          message: '您确认退出吗？'
+        })
+        .then(() => {
+          token.del()
+          this.$store.commit('setAuthInfo', undefined)
+          this.$router.push('/')
+        })
+        .catch(() => {})
+    }
   },
   computed: {
     ...mapState({
@@ -87,17 +104,22 @@ export default {
       isLogin: state => state.isLogin
     })
   },
-  created () {
-    if (!this.isLogin) {
-      this.$store.dispatch('refreshUserInfo')
-    }
-  }
+  created () {}
 }
 </script>
 <style lang="less" scoped>
 .my-page {
   min-height: 100%;
   background: #f5f7f9;
+  .van-button {
+    width: 347px;
+    height: 44px;
+    background: #3296fa;
+    border-radius: 10px;
+    margin: 13px auto;
+    font-size: 15px;
+    color: #ffffff;
+  }
   & > * {
     background-color: #fff;
     border-bottom: 4px solid #f5f7f9;
@@ -109,6 +131,7 @@ export default {
     color: #ffffff;
     &.nologin {
       position: relative;
+      height: 118px;
     }
     .mobile {
       width: 61px;

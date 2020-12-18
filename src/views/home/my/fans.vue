@@ -140,7 +140,6 @@ export default {
       this.fansQuery.page++
       // await userFans(this.fansQuery)
       const res = await randomUser(this.fansQuery)
-      console.log(res)
       this.fansList.push(...res.data.results)
       //   // 加载状态结束
       this.fansloading = false
