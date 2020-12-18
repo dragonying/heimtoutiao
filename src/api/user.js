@@ -63,7 +63,7 @@ export const blacklists = target => {
 // ├─ seq integer 必须 顺序序号
 export const allChannels = (data, isReset = false) => {
   return request({
-    url: ' /app/v1_0/user/channels',
+    url: '/app/v1_0/user/channels',
     method: isReset ? 'PUT' : 'PATCH',
     data: data
   })
