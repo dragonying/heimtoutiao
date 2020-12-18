@@ -3,7 +3,7 @@
     <navBar
       right
       name="ellipsis"
-      to="/searchResult/123"
+      :to="$route.query.ref"
       title="文章详情"
       id="top"
     ></navBar>

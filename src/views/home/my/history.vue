@@ -20,11 +20,11 @@
               <div class="info">
                 <h4
                   class="title van-multi-ellipsis--l2"
-                  @click="$router.push(`/detail/${item.art_id}`)"
+                  @click="$router.push(`/detail/${item.art_id}?ref=${$route.fullPath}`)"
                 >
                   {{ item.title }}
                 </h4>
-                <div class="content" @click="preview(item.cover.images)">
+                <div class="content">
                   <van-image
                     class="img"
                     v-for="(k, i) in item.cover.images"
@@ -67,11 +67,11 @@
               <div class="info">
                 <h4
                   class="title van-multi-ellipsis--l2"
-                  @click="$router.push(`/detail/${item.art_id}`)"
+                  @click="$router.push(`/detail/${item.art_id}?ref=${$route.fullPath}`)"
                 >
                   {{ item.title }}
                 </h4>
-                <div class="content" @click="preview(item.cover.images)">
+                <div class="content">
                   <van-image
                     class="img"
                     v-for="(k, i) in item.cover.images"

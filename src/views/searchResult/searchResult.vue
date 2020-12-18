@@ -11,7 +11,12 @@
       >
         <div class="item" v-for="(item, index) in list" :key="index">
           <div class="top">
-            <h4 class="title van-multi-ellipsis--l2">
+            <h4
+              class="title van-multi-ellipsis--l2"
+              @click="
+                $router.push(`/detail/${item.art_id}?ref=${$route.fullPath}`)
+              "
+            >
               {{ item.title }}
             </h4>
             <div class="content">

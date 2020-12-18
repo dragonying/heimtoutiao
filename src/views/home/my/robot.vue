@@ -157,17 +157,20 @@ export default {
       this.$refs.input.blur()
       this.showTool = false
     },
+    toBottom () {
+      // 消息滚动底部
+      this.$nextTick(() => {
+        const msg = this.$refs.chatBox // 获取对象
+        msg.scrollTop = msg.scrollHeight // 滚动高度
+      })
+    },
     // 输入框消息
     async enter () {
       this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, this.text)
       const userId = this.userInfo && this.userInfo.id ? this.userInfo.id : 111
       const res = await tuling(userId, this.text)
       this.appdMsg(MSG_TYPE.MSG_TYPE_TXT, res.data, true)
-      // 消息滚动底部
-      this.$nextTick(() => {
-        const msg = this.$refs.chatBox // 获取对象
-        msg.scrollTop = msg.scrollHeight // 滚动高度
-      })
+      this.toBottom()
       this.text = ''
     },
     // 上传图片
@@ -175,6 +178,7 @@ export default {
       list.forEach(v => {
         this.appdMsg(MSG_TYPE.MSG_TYPE_IMG, v)
       })
+      this.toBottom()
     },
     // 功能暂未开发
     unDevelop () {
