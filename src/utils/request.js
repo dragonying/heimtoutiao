@@ -48,12 +48,13 @@ instance.interceptors.response.use(
     // 对响应错误做点什么
     // 终止了.then直接 进入.catch
     // console.log(error.response.status)
-    if (error.response.status === 403 || error.response.status === 401) {
+    if (error.response.status === 403 || error.response.status === 408) {
       token.del()
       Store.commit('setAuthInfo', '')
       // console.log(Store)
       Toast.fail('请登录')
       router.push('/login')
+      return
     }
     return Promise.reject(error)
   }
@@ -63,6 +64,17 @@ instance.interceptors.response.use(
  * 请求方法
  * @param {*} option 属性
  */
-export default function (option = {}) {
-  return instance(option)
+// export default function (option = {}) {
+//   return instance(option)
+// }
+export default async (option = {}) => {
+  try {
+    const res = await instance(option)
+    return new Promise(resolve => {
+      console.log(res)
+      resolve(res)
+    })
+  } catch (err) {
+    console.log(1111, err)
+  }
 }

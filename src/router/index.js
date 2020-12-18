@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Store from '@/store'
-import { token } from '@/utils/storage'
+// import Store from '@/store'
+// import { token } from '@/utils/storage'
 // import { Toast } from 'vant'
 // 导入组件
 const Login = () => import('../views/login/login.vue')
@@ -124,17 +124,17 @@ router.beforeEach(async (to, from, next) => {
   console.log('to:', to)
   // console.log(('Store.islogin', Store.state.isLogin))
   next()
-  if (!Store.state.isLogin && token.get()) {
-    Store.dispatch('refreshUserInfo')
-  }
+  // if (!Store.state.isLogin && token.get()) {
+  //   Store.dispatch('refreshUserInfo')
+  // }
 })
 // 全局后置守卫
 router.afterEach(async to => {
   console.log('to:', to)
-  const tk = token.get()
-  if (!Store.state.isLogin && tk && tk.token) {
-    Store.dispatch('refreshUserInfo') // 刷新用户信息
-  }
+  // const tk = token.get()
+  // if (!Store.state.isLogin && tk && tk.token) {
+  //   Store.dispatch('refreshUserInfo') // 刷新用户信息
+  // }
 })
 
 export default router
