@@ -140,6 +140,13 @@ const routes = [
         meta: {
           unNeedLogin: true
         }
+      },
+      {
+        path: 'start',
+        component: resolve => require(['@/test/start'], resolve),
+        meta: {
+          unNeedLogin: true
+        }
       }
     ]
   }

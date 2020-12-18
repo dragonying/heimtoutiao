@@ -1,36 +1,39 @@
 <template>
   <div class="login">
-    <navBar title="登录" :leftIconShow="false"></navBar>
-    <van-form ref="form" class="login-form">
-      <van-field
-        v-model="form.mobile"
-        name="mobile"
-        :rules="rules.mobile"
-        placeholder="请输入手机号"
-      >
-        <template #left-icon>
-          <van-icon name="user-o" />
-        </template>
-      </van-field>
-      <van-field
-        v-model="form.code"
-        name="code"
-        :rules="rules.code"
-        placeholder="请输入验证码"
-      >
-        <template #left-icon>
-          <van-icon name="goods-collect-o" />
-        </template>
-        <template #button>
-          <span class="code" @click="codeClick" v-if="totalTime === 6"
-            >获取验证码</span
-          >
-          <span class="code" v-else>{{ totalTime }} 后重试</span>
-        </template>
-      </van-field>
-    </van-form>
-    <van-button type="info" @click="loginClick">登录</van-button>
-    <div class="deal">隐私条款</div>
+    <start v-if="showStart" />
+    <div v-else>
+      <navBar title="登录" :leftIconShow="false"></navBar>
+      <van-form ref="form" class="login-form">
+        <van-field
+          v-model="form.mobile"
+          name="mobile"
+          :rules="rules.mobile"
+          placeholder="请输入手机号"
+        >
+          <template #left-icon>
+            <van-icon name="user-o" />
+          </template>
+        </van-field>
+        <van-field
+          v-model="form.code"
+          name="code"
+          :rules="rules.code"
+          placeholder="请输入验证码"
+        >
+          <template #left-icon>
+            <van-icon name="goods-collect-o" />
+          </template>
+          <template #button>
+            <span class="code" @click="codeClick" v-if="totalTime === 6"
+              >获取验证码</span
+            >
+            <span class="code" v-else>{{ totalTime }} 后重试</span>
+          </template>
+        </van-field>
+      </van-form>
+      <van-button type="info" @click="loginClick">登录</van-button>
+      <div class="deal">隐私条款</div>
+    </div>
   </div>
 </template>
 
@@ -41,6 +44,7 @@ export default {
   name: 'login',
   data () {
     return {
+      showStart: true,
       totalTime: 6,
       form: {
         mobile: 13911111199,
@@ -64,7 +68,8 @@ export default {
     }
   },
   components: {
-    navBar: () => import('@/components/navBar.vue')
+    navBar: () => import('@/components/navBar.vue'),
+    start: () => import('@/views/login/start.vue')
   },
   methods: {
     codeClick () {
@@ -100,6 +105,11 @@ export default {
           this.$toast.fail('参数有误')
         })
     }
+  },
+  created () {
+    setTimeout(() => {
+      this.showStart = false
+    }, 1500)
   }
 }
 </script>
