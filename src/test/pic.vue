@@ -1,26 +1,32 @@
 <template>
   <div>
-  <h1>测试摄像头</h1>
     <!--开启摄像头-->
-    <img @click="callCamera" :src="headImgSrc" alt="摄像头" />
-    <!--canvas截取流-->
-    <canvas ref="canvas" width="640" height="480"></canvas>
+    <canvas v-show="showCanve" ref="canvas" width="640" height="480"></canvas>
     <!--图片展示-->
-    <video ref="video" width="640" height="480" autoplay></video>
-    <!--确认-->
-    <button @click="photograph">确认</button>
+    <video
+      v-if="showCanve"
+      ref="video"
+      width="640"
+      height="480"
+      autoplay
+      @click="photograph"
+    ></video>
+    <img v-else @click="callCamera" :src="headImgSrc" alt="摄像头" />
+    <!--canvas截取流-->
   </div>
 </template>
 <script>
 export default {
   data () {
     return {
-      headImgSrc: require('@/assets/logo.png')
+      showCanve: false,
+      headImgSrc: require('@/assets/images/holdCard.png')
     }
   },
   methods: {
     // 调用摄像头
     callCamera () {
+      this.showCanve = true
       // H5调用电脑摄像头API
       navigator.mediaDevices
         .getUserMedia({
@@ -43,17 +49,17 @@ export default {
       ctx.drawImage(this.$refs.video, 0, 0, 640, 480)
       // 转base64格式、图片格式转换、图片质量压缩
       const imgBase64 = this.$refs.canvas.toDataURL('image/jpeg', 0.7) // 由字节转换为KB 判断大小
-
-      const str = imgBase64.replace('data:image/jpeg;base64,', '')
-      const strLength = str.length
-      const fileLength = parseInt(strLength - (strLength / 8) * 2) // 图片尺寸  用于判断
-      const size = (fileLength / 1024).toFixed(2)
-      console.log(size) // 上传拍照信息  调用接口上传图片 .........
-      // 保存到本地
-      const ADOM = document.createElement('a')
-      ADOM.href = this.headImgSrc
-      ADOM.download = new Date().getTime() + '.jpeg'
-      ADOM.click()
+      console.log(imgBase64)
+      // const str = imgBase64.replace('data:image/jpeg;base64,', '')
+      // const strLength = str.length
+      // const fileLength = parseInt(strLength - (strLength / 8) * 2) // 图片尺寸  用于判断
+      // const size = (fileLength / 1024).toFixed(2)
+      // console.log(size) // 上传拍照信息  调用接口上传图片 .........
+      // // 保存到本地
+      // const ADOM = document.createElement('a')
+      // ADOM.href = this.headImgSrc
+      // ADOM.download = new Date().getTime() + '.jpeg'
+      // ADOM.click()
     },
     // 关闭摄像头
     closeCamera () {
