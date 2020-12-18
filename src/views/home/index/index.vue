@@ -10,12 +10,7 @@
       />
     </div>
     <div class="labelBox">
-      <van-tabs
-        v-model="active"
-        color="#2F97FA"
-        line-width="20px"
-        title-active-color="#000000"
-      >
+      <van-tabs v-model="active" color="#2F97FA" line-width="20px" title-active-color="#000000">
         <van-tab
           v-for="(value, index) in info"
           :key="index"
@@ -79,15 +74,15 @@
           size="large"
           type="primary"
           class="showRecommend"
-          >{{ value.name }}</van-tag
-        >
+          @click="addChannel(value.id)"
+        >{{ value.name }}</van-tag>
       </div>
       <div class="windows">
         <div class="topWindows">
           <div class="myChannel">频道推荐</div>
         </div>
         <van-tag
-          v-for="(value,index) in reserve"
+          v-for="(value,index) in info"
           :key="index"
           color="#F4F5F6"
           size="large"
@@ -109,7 +104,7 @@ export default {
     return {
       show: false,
       value: "", // 输入框
-      active: "0",
+      active: "1",
       info: [], // 储存当前全部用列表
       list: [],
       loading: false,
@@ -117,7 +112,7 @@ export default {
       pagrTop: true,
       compile: true,
       reserve: [], //克隆的数组
-      Refresh: [], //储存刷新的数据
+      myChannel: [], //储存我的频道
     };
   },
   async created() {
@@ -131,7 +126,22 @@ export default {
   },
   // 事件
   methods: {
+    addChannel(id) {
+      this.reserve.forEach((value, index) => {
+        if (value.id === id) {
+          this.myChannel.push(this.reserve[index]);
+          this.reserve.splice(index, 1);
+        }
+      });
+    },
     async add() {
+      const res = await allChannels(); //token 问题
+      console.log(res);
+      this.reserve.forEach((value, index) => {
+        if (value.id === value.id) {
+          this.reserve.splice(index, 1);
+        }
+      });
       this.compile = !this.compile;
     },
 
