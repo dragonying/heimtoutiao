@@ -3,6 +3,7 @@ import { token } from '@/utils/storage'
 import router from '@/router'
 import { Toast } from 'vant'
 import Store from '@/store'
+import { SERVER_STATUS } from '@/config/enum'
 // 相当于axios副本
 const instance = axios.create({
   baseURL: process.env.VUE_APP_URL // 设置基地址
@@ -12,20 +13,16 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(
   function (config) {
-    // console.log(config.method)
-    // if (['get', 'patch'].includes(config.method)) {
-    //   config.headers['Content-Type'] = 'application/json'
-    // } else {
-    //   config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-    // }
     config.headers['Content-Type'] = 'application/json'
 
     // 默认需要token
     if (!config.unNeedToken) {
       // 临时header使用
       const tk = token.get()
-      if (tk && tk.token) {
-        config.headers.Authorization = `Bearer ${tk.token}`
+      if (tk) {
+        config.headers.Authorization = `Bearer ${
+          config.useFreshToken ? tk.refresh_token : tk.token
+        }`
       } else {
         Toast.fail('请登录')
         router.push('/login')
@@ -46,16 +43,18 @@ instance.interceptors.response.use(
   },
   function (error) {
     // 对响应错误做点什么
-    // 终止了.then直接 进入.catch
-    // console.log(error.response.status)
-    if (error.response.status === 403 || error.response.status === 408) {
-      token.del()
-      Store.commit('setAuthInfo', '')
-      // console.log(Store)
-      Toast.fail('请登录')
-      router.push('/login')
-      return
+    let tip = '未知错误'
+    const status = error.response.status
+    const info = SERVER_STATUS[String(status)]
+    if (info) {
+      if ([401, 403].includes(status)) {
+        token.del()
+        Store.commit('setAuthInfo', '')
+        router.push('/login')
+      }
+      tip = info.title
     }
+    Toast.fail(tip)
     return Promise.reject(error)
   }
 )
@@ -64,17 +63,8 @@ instance.interceptors.response.use(
  * 请求方法
  * @param {*} option 属性
  */
-// export default function (option = {}) {
-//   return instance(option)
-// }
-export default async (option = {}) => {
-  try {
-    const res = await instance(option)
-    return new Promise(resolve => {
-      console.log(res)
-      resolve(res)
-    })
-  } catch (err) {
-    console.log(1111, err)
-  }
+export default function (option = {}) {
+  return instance(option).catch(err => {
+    console.error(err)
+  })
 }

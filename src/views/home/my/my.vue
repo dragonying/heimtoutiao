@@ -24,7 +24,7 @@
         </div>
       </div>
       <ul class="stastic">
-        <li class="item" @click="$router.push('/user/userInfo')">
+        <li class="item" @click="$router.push(`/user/userInfo/${userInfo.id}`)">
           <h4>{{ userInfo.art_count }}</h4>
           <p>动态</p>
         </li>
@@ -39,7 +39,7 @@
       </ul>
     </section>
     <section v-else class="top nologin">
-      <van-icon class="mobile" name="user-o" />
+      <van-icon class="mobile" name="user-o" @click="$router.push('/')" />
     </section>
     <section class="tool">
       <ul class="tool-item">
@@ -87,11 +87,7 @@ export default {
       isLogin: state => state.isLogin
     })
   },
-  created () {
-    if (!this.isLogin) {
-      this.$store.dispatch('refreshUserInfo')
-    }
-  }
+  created () {}
 }
 </script>
 <style lang="less" scoped>
@@ -109,6 +105,7 @@ export default {
     color: #ffffff;
     &.nologin {
       position: relative;
+      height: 118px;
     }
     .mobile {
       width: 61px;

@@ -80,7 +80,6 @@ export default {
             }
           }, 1000)
           mobileCode(this.form.mobile).then(res => {
-            console.log(res)
             this.$toast.success('验证码：246810')
           })
         })
@@ -89,10 +88,17 @@ export default {
         })
     },
     async loginClick () {
-      const res = await authorizations(this.form)
-      token.set(res.data)
-      this.$toast.success('欢迎回来')
-      this.$router.push('/home/my')
+      this.$refs.form
+        .validate()
+        .then(async () => {
+          const res = await authorizations(this.form)
+          token.set(res.data)
+          this.$router.push(this.$route.query.redirect || '/home/my')
+          this.$toast.success('欢迎回来')
+        })
+        .catch(() => {
+          this.$toast.fail('参数有误')
+        })
     }
   }
 }
