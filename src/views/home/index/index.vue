@@ -35,7 +35,9 @@
       loading-text
     >
       <div class="exhibition" v-for="(item, index) in list" :key="index">
-        <span>{{ item.title }}</span>
+        <span
+              @click="$router.push(`/detail/${item.art_id}?ref=${$route.fullPath}`) "
+        >{{ item.title }}</span>
         <div class="exhibitionImg">
           <ul>
             <li v-if="item.cover.images">
@@ -183,7 +185,7 @@ export default {
       this.compile = !this.compile
       this.reserve.forEach((value, index) => {
         // 设置空对象来储存参数
-        let reserveId = {}
+        const reserveId = {}
         if (value.id !== 0) {
           reserveId.id = value.id
           reserveId.seq = index + 1
@@ -191,8 +193,7 @@ export default {
           this.myReserve.push(reserveId)
         }
       })
-      console.log(this.myReserve)
-      const res = await allChannels({ channels: this.myReserve })
+      await allChannels({ channels: this.myReserve })
     },
     // 弹窗点击事件
     async showPopup () {
@@ -259,21 +260,21 @@ export default {
   .opinionBox {
     width: 300px;
     height: 200px;
-      .tickling li{
-        width: 100%;
-        height: 50px;
-    text-align: center;
-     font-size: 16px;
-    font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
-    font-weight: 400;
-    text-align: left;
-    color: #333333;
-    line-height: 18px;
-    letter-spacing: 2px;
-    line-height: 50px;
-    padding-left: 40px;
-    margin-bottom: 12px;
-  }
+    .tickling li {
+      width: 100%;
+      height: 50px;
+      text-align: center;
+      font-size: 16px;
+      font-family: Microsoft YaHei Regular, Microsoft YaHei Regular-Regular;
+      font-weight: 400;
+      text-align: left;
+      color: #333333;
+      line-height: 18px;
+      letter-spacing: 2px;
+      line-height: 50px;
+      padding-left: 40px;
+      margin-bottom: 12px;
+    }
   }
   .recommend {
     font-size: 16px;
